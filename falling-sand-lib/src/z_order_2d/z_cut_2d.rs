@@ -1,36 +1,35 @@
 #![warn(clippy::pedantic)]
-use crate::z_index_2d::ZIndex;
+use crate::z_order_2d::z_index_2d::ZIndex;
 
 #[derive(Debug)]
-pub struct ZCut{
+pub struct ZCut {
     min: ZIndex,
     max: ZIndex,
 }
 
 impl ZCut {
-    pub fn new_from_z(min: ZIndex, max: ZIndex) -> Self{
-        Self{
-            min,
-            max
-        }
+    pub fn new_from_z(min: ZIndex, max: ZIndex) -> Self {
+        Self { min, max }
     }
-    pub fn min(&self) -> u64{
+    pub fn min(&self) -> u64 {
         self.min.index()
     }
-    pub fn max(&self) -> u64{
+    pub fn max(&self) -> u64 {
         self.max.index()
     }
-    pub fn highest_order(&self) -> u8{
+    pub fn highest_order(&self) -> u8 {
         let diff = self.min.index() ^ self.max.index();
-        if diff == 0 {return 0}
+        if diff == 0 {
+            return 0;
+        }
         diff.ilog2() as u8
     }
-    pub fn highest_order_bit(&self) -> u64{
+    pub fn highest_order_bit(&self) -> u64 {
         1 << self.highest_order()
     }
-    pub fn split(self) -> Result<(Self, Self), Self>{
+    pub fn split(self) -> Result<(Self, Self), Self> {
         let highest_order = self.highest_order();
-        if highest_order < 1{
+        if highest_order < 1 {
             return Result::Err(self);
         }
         let preserve_mask = !((self.highest_order_bit() << 1) - 1);
@@ -39,43 +38,41 @@ impl ZCut {
 
         let mut post_cut = ZIndex::new(self.highest_order_bit() | preserve);
         let mut pre_cut = ZIndex::new(post_cut.index() - 1);
-    
+
         if reposition_mask & self.min() == 0 && reposition_mask & self.max() == reposition_mask {
-            return Result::Err(self)
+            return Result::Err(self);
         }
-        if highest_order.is_multiple_of(2){
+        if highest_order.is_multiple_of(2) {
             //cut dir is x, copy min and max y
             let low_y_bits = self.min.y_bits();
             let high_y_bits = self.max.y_bits();
-            unsafe{
+            unsafe {
                 post_cut.set_y_bits(low_y_bits);
                 pre_cut.set_y_bits(high_y_bits);
             }
-        }else{
+        } else {
             //cut dir is y, copy min and max x
             let low_x_bits = self.min.x_bits();
             let high_x_bits = self.max.x_bits();
-            unsafe{
+            unsafe {
                 post_cut.set_x_bits(low_x_bits);
                 pre_cut.set_x_bits(high_x_bits);
             }
         }
-        Result::Ok(
-            (
-                ZCut::new_from_z(self.min, pre_cut),
-                ZCut::new_from_z(post_cut, self.max)
-            )
-        )
+        Result::Ok((
+            ZCut::new_from_z(self.min, pre_cut),
+            ZCut::new_from_z(post_cut, self.max),
+        ))
     }
-    pub fn slice(self) -> Vec<Self>{
+    pub fn slice(self) -> Vec<Self> {
         let mut stack: Vec<Self> = vec![];
         let mut add_stack: Vec<Self> = vec![self];
-        while let Some(item ) = add_stack.pop(){
+        while let Some(item) = add_stack.pop() {
             stack.push(item);
-            loop{
+            loop {
                 let current_cut = stack.pop().unwrap();
                 match current_cut.split() {
-                    Ok((a,b)) => {
+                    Ok((a, b)) => {
                         add_stack.push(b);
                         stack.push(a);
                     }

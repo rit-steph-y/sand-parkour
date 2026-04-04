@@ -18,7 +18,10 @@ namespace HW5_GROUP_PROJECT
 
         public SandGame()
         {
-            Debugger.Log(0,null, $"{Integers.Addition(3,5)}");
+
+            FallingSand sand = new();
+            sand.Dispose();
+            Debugger.Log(0,null, $"{"owo"}");
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;

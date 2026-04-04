@@ -1,0 +1,21 @@
+[package]
+name = "falling-sand-lib"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["lib","cdylib"]
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+debug = false
+strip = "none"
+debug-assertions = false
+overflow-checks = false
+lto = true
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false

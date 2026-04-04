@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HW5_GROUP_PROJECT.extern_testing;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -16,6 +18,7 @@ namespace HW5_GROUP_PROJECT
 
         public SandGame()
         {
+            Debugger.Log(0,null, $"{Integers.Addition(3,5)}");
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;

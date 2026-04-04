@@ -27,4 +27,24 @@
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />
   </Target>
+  <Target Name="Build Rust Lib" BeforeTargets="Build">
+    <Message Text="Building rust dependency" Importance="High" />
+    <Exec Command="
+      cd falling-sand-lib 
+      cargo build
+      
+    "/>
+  </Target>
+  <ItemGroup>
+    <Content Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'" 
+              Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/debug/libfalling_sand_lib.so">
+      <Link>libfalling_sand_lib.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Condition="'$(OS)' == 'Windows_NT'" 
+              Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/debug/falling_sand_lib.dll">
+      <Link>falling_sand_lib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

@@ -32,28 +32,41 @@ impl ZIndex {
     pub fn new(index: u64) -> Self {
         Self { index }
     }
-    //unsafe due to not checking if bits is only in x positions
+    /// resets bits from x value and then replaces 
+    /// them with the new bits specified.
+    /// 
+    /// unsafe due to not checking if bits is only in x positions
     pub unsafe fn set_x_bits(&mut self, bits: u64) {
         self.index &= Y_BITS;
         self.index |= bits;
     }
-    //unsafe due to not checking if bits is only in y positions
+    /// resets bits from y value and then replaces 
+    /// them with the new bits specified.
+    /// 
+    /// unsafe due to not checking if bits is only in y positions
     pub unsafe fn set_y_bits(&mut self, bits: u64) {
         self.index &= X_BITS;
         self.index |= bits;
     }
+    /// masks then returns the bits in the index that correspond to x value,
+    /// but does not collect them.
     pub fn x_bits(&self) -> u64 {
         self.index & X_BITS
     }
+    /// masks then returns the bits in the index that correspond to y value,
+    /// but does not collect them.
     pub fn y_bits(&self) -> u64 {
         self.index & Y_BITS
     }
-    pub fn x(&self) -> u64 {
-        unsafe { _pext_u64(self.index, X_BITS) }
+    /// extracts the x value that this index represents.
+    pub fn x(&self) -> u32 {
+        (unsafe { _pext_u64(self.index, X_BITS) }) as u32
     }
-    pub fn y(&self) -> u64 {
-        unsafe { _pext_u64(self.index, Y_BITS) }
+    /// extracts the y value that this index represents.
+    pub fn y(&self) -> u32 {
+        (unsafe { _pext_u64(self.index, Y_BITS) }) as u32
     }
+    /// returns the wrapped index value.
     pub fn index(&self) -> u64 {
         self.index
     }

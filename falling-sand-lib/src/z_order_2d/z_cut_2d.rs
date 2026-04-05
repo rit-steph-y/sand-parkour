@@ -1,7 +1,16 @@
 #![warn(clippy::pedantic)]
 use crate::z_order_2d::z_index_2d::ZIndex;
 
+/**
+ this type represents a cut in the space represented by the Z-order curve.
+ this is used to, in ideal circumstances, traverse the space of a Z-order
+ curve more efficiently by skipping unneeded sections in the data.
+
+ we still use a z-order curve since that maintains critical cache locality
+ which is kind of important in a performance critical codebase.
+*/
 #[derive(Debug)]
+#[allow(unused)]
 pub struct ZCut {
     min: ZIndex,
     max: ZIndex,

@@ -58,7 +58,7 @@ mod tests {
 
         for c in 0..(display_size * display_size) {
             let index = ZIndex::new(c as u64);
-            debug_display[(index.x() + index.y() * display_size as u64) as usize] = storage[c];
+            debug_display[index.x() as usize + index.y() as usize * display_size] = storage[c];
         }
 
         for y in 0..display_size {

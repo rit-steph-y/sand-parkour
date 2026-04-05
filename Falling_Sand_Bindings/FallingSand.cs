@@ -14,7 +14,7 @@ namespace HW5_GROUP_PROJECT.extern_testing{
         private static extern SandHandle CreateHandle();
 
         [DllImport("falling_sand_lib", EntryPoint ="test_falling_sand_handle")]
-        private static extern ushort Test(ref SandHandle handle, ZIndex index);
+        private static extern ushort Test(ref SandHandle handle, ulong index);
 
         [DllImport("falling_sand_lib", EntryPoint ="dispose_falling_sand_handle")]
         private static extern bool DisposeHandle(SandHandle handle);

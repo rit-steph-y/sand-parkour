@@ -7,7 +7,7 @@ use std::fmt::Formatter;
 /**
 z index struct to store 2D coordinates as inherently interleaved bits.
 */
-#[repr(C)]
+#[repr(transparent)]
 #[derive(PartialEq, Eq, Clone, Copy, Hash)]
 pub struct ZIndex {
     index: u64,
@@ -56,5 +56,16 @@ impl ZIndex {
     }
     pub fn index(&self) -> u64 {
         self.index
+    }
+}
+
+#[cfg(test)]
+mod tests{
+    use crate::z_order_2d::z_index_2d::ZIndex;
+
+    #[test]
+    fn test_construct_from_coords(){
+        let index = ZIndex::from_coords(0b10010101, 0b1001000);
+        assert_eq!(0b110000110010001, index.index())
     }
 }

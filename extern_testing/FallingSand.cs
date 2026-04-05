@@ -14,7 +14,7 @@ namespace HW5_GROUP_PROJECT.extern_testing{
         private static extern SandHandle CreateHandle();
 
         [DllImport("falling_sand_lib", EntryPoint ="test_falling_sand_handle")]
-        private static extern int Test(SandHandle handle);
+        private static extern int Test(ref SandHandle handle);
 
         [DllImport("falling_sand_lib", EntryPoint ="dispose_falling_sand_handle")]
         private static extern bool DisposeHandle(SandHandle handle);
@@ -24,7 +24,10 @@ namespace HW5_GROUP_PROJECT.extern_testing{
         public FallingSand()
         {
             handle = CreateHandle();
-            Console.Write($"{Test(handle)}");
+            Console.WriteLine($"{Test(ref handle)}");
+            Console.WriteLine($"{Test(ref handle)}");
+            Console.WriteLine($"{Test(ref handle)}");
+            Console.WriteLine($"{Test(ref handle)}");
         }
 
         public void Dispose()

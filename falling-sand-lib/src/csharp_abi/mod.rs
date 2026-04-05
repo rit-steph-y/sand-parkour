@@ -18,68 +18,13 @@ impl FallingSandGridHandle {
         }
     }
     #[unsafe(no_mangle)]
-    pub unsafe extern "C" fn test_falling_sand_handle(&mut self) -> Vec<i32>{
-        vec![0,1,7,9,10]
+    pub unsafe extern "C" fn test_falling_sand_handle(&mut self) -> i32{
+        let mut b = self.internal_val.borrow_mut();
+        b.count += 1;
+        b.count as i32
     }
     #[unsafe(no_mangle)]
-    pub fn dispose_falling_sand_handle(self){}
+    pub unsafe extern "C" fn dispose_falling_sand_handle(self){
+        drop(self)
+    }
 }
-// /**
-// A shared handle that can be accessed concurrently by multiple threads.
-
-// The interior value can be treated like `&T`.
-// */
-// #[repr(transparent)]
-// pub struct HandleShared<T: ?Sized>(*const T);
-
-// unsafe_impl!(
-//     "The handle is semantically `&T`" =>
-//     impl<T> Send for HandleShared<T>
-//         where T: ?Sized + Sync
-//     {
-//     }
-// );
-
-// impl<T> UnwindSafe for HandleShared<T>
-// where
-//     T: ?Sized + RefUnwindSafe
-// {
-// }
-
-// impl<T> HandleShared<T>
-// where
-//     T: Send + Sync + 'static
-// {
-//     fn alloc(value: T) -> Self {
-//         let v = Box::new(value);
-
-//         HandleShared(Box::into_raw(v))
-//     }
-// }
-
-// impl<T> HandleShared<T>
-// where
-//     T: ?Sized + Send + Sync
-// {
-//     unsafe_fn!(
-//         "There are no other live references and the handle won't be used again" =>
-//         fn dealloc<R>(handle: Self, f: impl FnOnce(&mut T) -> R) -> R {
-//             let mut v = Box::from_raw(handle.0 as *mut T);
-
-//             f(&mut *v)
-//         }
-//     );
-// }
-
-// impl<T> Deref for HandleShared<T>
-// where
-//     T: ?Sized
-// {
-//     type Target = T;
-
-//     fn deref(&self) -> &T {
-//         unsafe_block!("We own the interior value" => {
-//             &*self.0
-//         })
-//     }
-// }

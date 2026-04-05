@@ -4,8 +4,10 @@ use super::falling_sand_chunk::FallingSandChunk;
 
 use std::collections::HashMap;
 
-// A grid of chunks of falling sand,
-// this is basically minecraft chunks, but 2d.
+/**
+A grid of chunks of falling sand,
+this is basically minecraft chunks, but 2d.
+ */
 pub struct FallingSandGrid {
     chunks: HashMap<ZIndex, FallingSandChunk>,
 }

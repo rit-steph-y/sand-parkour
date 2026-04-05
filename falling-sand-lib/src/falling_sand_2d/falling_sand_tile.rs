@@ -1,10 +1,10 @@
 /**
- * a single falling sand tile, and all data associated
- * all falling sand tiles will have a velocity, and a subpixel
- * position.
- * 
- * the id of the tile determines what kind of tile it
- * is, and how that behaves.
+a single falling sand tile, and all data associated
+all falling sand tiles will have a velocity, and a subpixel
+position.
+  
+the id of the tile determines what kind of tile it
+is, and how that behaves.
  */
 #[repr(C)]
 pub struct FallingSandTile {

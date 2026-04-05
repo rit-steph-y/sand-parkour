@@ -4,7 +4,9 @@ use std::arch::x86_64::_pext_u64;
 use std::fmt::Debug;
 use std::fmt::Formatter;
 
-/// z index struct to store 2D coordinates as inherently interleaved bits.
+/**
+z index struct to store 2D coordinates as inherently interleaved bits.
+*/
 #[repr(C)]
 #[derive(PartialEq, Eq, Clone, Copy, Hash)]
 pub struct ZIndex {

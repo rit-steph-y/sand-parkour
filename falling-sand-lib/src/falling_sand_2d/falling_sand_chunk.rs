@@ -21,13 +21,17 @@ impl FallingSandChunk {
         ZIndex::new(index.index() >> (CHUNK_BITS * 2))
     }
 
-    pub fn get_index_in_chunk(index: ZIndex) -> ZIndex {
-        ZIndex::new(index.index() & INDEX_IN_CHUNK_MASK)
+    /// the index in chunk bit mask is always low enough that this should
+    /// never truncate.
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn get_index_in_chunk(index: ZIndex) -> usize {
+        (index.index() & INDEX_IN_CHUNK_MASK) as usize
     }
 }
 
 impl FallingSandChunk {
     pub fn get_tile(&self, index: ZIndex) -> &FallingSandTile {
-        &self.data[Self::get_index_in_chunk(index).index() as usize]
+        let num_index = Self::get_index_in_chunk(index);
+        &self.data[num_index]
     }
 }

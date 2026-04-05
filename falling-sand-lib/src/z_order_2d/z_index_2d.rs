@@ -12,6 +12,21 @@ pub struct ZIndex {
     index: u64,
 }
 
+// allow for ZIndex to automatically be
+// converted to type u64
+// you can't autoconvert this to a usize since
+// that would cause hard to predict behavior
+// on 32 bit targets, but also, who in the world
+// is still using 32 bit? 
+// I mean I doubt we will be compiling to WASM
+// but it's still good to be cautious to not
+// set up a lame checkov's gun or whatever it's called.
+impl From<ZIndex> for u64{
+    fn from(val: ZIndex) -> Self {
+        val.index
+    }
+}
+
 pub const X_BITS: u64 = 0x5555_5555_5555_5555;
 
 pub const Y_BITS: u64 = 0xaaaa_aaaa_aaaa_aaaa;

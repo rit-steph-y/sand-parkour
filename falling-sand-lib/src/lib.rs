@@ -12,7 +12,7 @@ mod z_order_2d;
 #[cfg(test)]
 mod tests {
     use crate::z_order_2d::z_cut_2d::ZCut;
-    use crate::z_order_2d::z_index_2d::ZIndex;
+    use crate::z_order_2d::z_index_2d::ZOrderIndex;
     use std::time::SystemTime;
 
     /**
@@ -29,8 +29,8 @@ mod tests {
     fn main() {
         println!("Hello, world!");
         let stack = ZCut::new_from_z(
-            ZIndex::from_coords(3, 3),
-            ZIndex::from_coords(1024 - 1, 1024 - 1),
+            ZOrderIndex::from_coords(3, 3),
+            ZOrderIndex::from_coords(1024 - 1, 1024 - 1),
         )
         .slice();
         // keep a stack of cuts made
@@ -57,7 +57,7 @@ mod tests {
         debug_display.resize(display_size * display_size, false);
 
         for c in 0..(display_size * display_size) {
-            let index = ZIndex::new(c as u64);
+            let index = ZOrderIndex::new(c as u64);
             debug_display[index.x() as usize + index.y() as usize * display_size] = storage[c];
         }
 

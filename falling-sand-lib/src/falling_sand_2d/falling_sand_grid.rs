@@ -1,4 +1,4 @@
-use crate::z_order_2d::z_index_2d::ZIndex;
+use crate::z_order_2d::z_index_2d::ZOrderIndex;
 
 use super::falling_sand_chunk::FallingSandChunk;
 
@@ -9,7 +9,7 @@ A grid of chunks of falling sand,
 this is basically minecraft chunks, but 2d.
  */
 pub struct FallingSandGrid {
-    chunks: HashMap<ZIndex, FallingSandChunk>,
+    chunks: HashMap<ZOrderIndex, FallingSandChunk>,
 }
 
 impl FallingSandGrid {
@@ -18,7 +18,7 @@ impl FallingSandGrid {
             chunks: HashMap::new(),
         }
     }
-    pub fn get_tile(&self, index: ZIndex) -> u16 {
+    pub fn get_tile(&self, index: ZOrderIndex) -> u16 {
         let chunk_id = FallingSandChunk::get_chunk_id(index);
         if let Some(chunk) = self.chunks.get(&chunk_id) {
             return chunk.get_tile(index).id();

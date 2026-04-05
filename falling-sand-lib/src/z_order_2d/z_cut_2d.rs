@@ -1,4 +1,4 @@
-use crate::z_order_2d::z_index_2d::ZIndex;
+use crate::z_order_2d::z_index_2d::ZOrderIndex;
 
 /**
  this type represents a cut in the space represented by the Z-order curve.
@@ -11,12 +11,12 @@ use crate::z_order_2d::z_index_2d::ZIndex;
 #[derive(Debug)]
 #[allow(unused)]
 pub struct ZCut {
-    min: ZIndex,
-    max: ZIndex,
+    min: ZOrderIndex,
+    max: ZOrderIndex,
 }
 
 impl ZCut {
-    pub fn new_from_z(min: ZIndex, max: ZIndex) -> Self {
+    pub fn new_from_z(min: ZOrderIndex, max: ZOrderIndex) -> Self {
         Self { min, max }
     }
     pub fn min(&self) -> u64 {
@@ -45,8 +45,8 @@ impl ZCut {
         let reposition_mask = !preserve_mask >> 1;
         let preserve = self.min() & preserve_mask;
 
-        let mut post_cut = ZIndex::new(self.highest_order_bit() | preserve);
-        let mut pre_cut = ZIndex::new(post_cut.index() - 1);
+        let mut post_cut = ZOrderIndex::new(self.highest_order_bit() | preserve);
+        let mut pre_cut = ZOrderIndex::new(post_cut.index() - 1);
 
         if reposition_mask & self.min() == 0 && reposition_mask & self.max() == reposition_mask {
             return Result::Err(self);

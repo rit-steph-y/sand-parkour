@@ -8,7 +8,7 @@ z index struct to store 2D coordinates as inherently interleaved bits.
 */
 #[repr(transparent)]
 #[derive(PartialEq, Eq, Clone, Copy, Hash)]
-pub struct ZIndex {
+pub struct ZOrderIndex {
     index: u64,
 }
 
@@ -21,8 +21,8 @@ pub struct ZIndex {
 // I mean I doubt we will be compiling to WASM
 // but it's still good to be cautious to not
 // set up a lame checkov's gun or whatever it's called.
-impl From<ZIndex> for u64{
-    fn from(val: ZIndex) -> Self {
+impl From<ZOrderIndex> for u64{
+    fn from(val: ZOrderIndex) -> Self {
         val.index
     }
 }
@@ -31,13 +31,13 @@ pub const X_BITS: u64 = 0x5555_5555_5555_5555;
 
 pub const Y_BITS: u64 = 0xaaaa_aaaa_aaaa_aaaa;
 
-impl Debug for ZIndex {
+impl Debug for ZOrderIndex {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "(x:{:b},y:{:b})", self.x(), self.y())
     }
 }
 
-impl ZIndex {
+impl ZOrderIndex {
     // creates a z-index using a provided x and y value (unsigned)
     pub fn from_coords(x: u32, y: u32) -> Self {
         let index = unsafe { _pdep_u64(u64::from(x), X_BITS) | _pdep_u64(u64::from(y), Y_BITS) };
@@ -90,11 +90,11 @@ impl ZIndex {
 
 #[cfg(test)]
 mod tests {
-    use crate::z_order_2d::z_index_2d::ZIndex;
+    use crate::z_order_2d::z_index_2d::ZOrderIndex;
 
     #[test]
     fn test_construct_from_coords() {
-        let index = ZIndex::from_coords(0b10010101, 0b1001000);
+        let index = ZOrderIndex::from_coords(0b10010101, 0b1001000);
         assert_eq!(0b110000110010001, index.index())
     }
 }

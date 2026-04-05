@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use crate::falling_sand_2d::falling_sand_grid::FallingSandGrid;
-use crate::z_order_2d::z_index_2d::ZIndex;
+use crate::z_order_2d::z_index_2d::ZOrderIndex;
 
 #[repr(C)]
 struct FallingSandGridHandle {
@@ -18,7 +18,7 @@ impl FallingSandGridHandle {
         }
     }
     #[unsafe(no_mangle)]
-    pub extern "C" fn test_falling_sand_handle(&self, position: ZIndex) -> u16 {
+    pub extern "C" fn test_falling_sand_handle(&self, position: ZOrderIndex) -> u16 {
         let b = self.internal_val.borrow();
         b.get_tile(position)
     }

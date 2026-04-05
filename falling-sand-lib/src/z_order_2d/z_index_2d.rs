@@ -1,4 +1,3 @@
-#![warn(clippy::pedantic)]
 use std::arch::x86_64::_pdep_u64;
 use std::arch::x86_64::_pext_u64;
 use std::fmt::Debug;
@@ -50,24 +49,26 @@ impl ZIndex {
     }
     /// masks then returns the bits in the index that correspond to x value,
     /// but does not collect them.
-    pub fn x_bits(&self) -> u64 {
+    pub fn x_bits(self) -> u64 {
         self.index & X_BITS
     }
     /// masks then returns the bits in the index that correspond to y value,
     /// but does not collect them.
-    pub fn y_bits(&self) -> u64 {
+    pub fn y_bits(self) -> u64 {
         self.index & Y_BITS
     }
     /// extracts the x value that this index represents.
-    pub fn x(&self) -> u32 {
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn x(self) -> u32 {
         (unsafe { _pext_u64(self.index, X_BITS) }) as u32
     }
     /// extracts the y value that this index represents.
-    pub fn y(&self) -> u32 {
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn y(self) -> u32 {
         (unsafe { _pext_u64(self.index, Y_BITS) }) as u32
     }
     /// returns the wrapped index value.
-    pub fn index(&self) -> u64 {
+    pub fn index(self) -> u64 {
         self.index
     }
 }

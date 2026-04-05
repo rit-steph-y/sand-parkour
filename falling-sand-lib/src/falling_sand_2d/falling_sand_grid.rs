@@ -18,11 +18,11 @@ impl FallingSandGrid {
             chunks: HashMap::new(),
         }
     }
-    pub fn get_tile(&self, index: &ZIndex) -> u16 {
+    pub fn get_tile(&self, index: ZIndex) -> u16 {
         let chunk_id = FallingSandChunk::get_chunk_id(index);
         if let Some(chunk) = self.chunks.get(&chunk_id) {
             return chunk.get_tile(index).id();
         }
-        return 0;
+        0
     }
 }

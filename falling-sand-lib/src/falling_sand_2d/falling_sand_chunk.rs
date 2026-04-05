@@ -17,17 +17,17 @@ pub struct FallingSandChunk {
 }
 
 impl FallingSandChunk {
-    pub fn get_chunk_id(index: &ZIndex) -> ZIndex {
+    pub fn get_chunk_id(index: ZIndex) -> ZIndex {
         ZIndex::new(index.index() >> (CHUNK_BITS * 2))
     }
 
-    pub fn get_index_in_chunk(index: &ZIndex) -> ZIndex {
+    pub fn get_index_in_chunk(index: ZIndex) -> ZIndex {
         ZIndex::new(index.index() & INDEX_IN_CHUNK_MASK)
     }
 }
 
 impl FallingSandChunk {
-    pub fn get_tile(&self, index: &ZIndex) -> &FallingSandTile {
+    pub fn get_tile(&self, index: ZIndex) -> &FallingSandTile {
         &self.data[Self::get_index_in_chunk(index).index() as usize]
     }
 }

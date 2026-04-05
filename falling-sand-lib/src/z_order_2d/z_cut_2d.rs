@@ -1,4 +1,3 @@
-#![warn(clippy::pedantic)]
 use crate::z_order_2d::z_index_2d::ZIndex;
 
 /**
@@ -26,6 +25,7 @@ impl ZCut {
     pub fn max(&self) -> u64 {
         self.max.index()
     }
+    #[allow(clippy::cast_possible_truncation)]
     pub fn highest_order(&self) -> u8 {
         let diff = self.min.index() ^ self.max.index();
         if diff == 0 {

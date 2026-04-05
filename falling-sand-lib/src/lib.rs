@@ -1,13 +1,30 @@
+// mod statements here indicate that I'm including
+// code from outside of this file, in this case,
+// the mod.rs under the 3 folders specified.
 mod csharp_abi;
 mod falling_sand_2d;
 mod z_order_2d;
 
+// #[cfg(test)] means:
+// this code is only included when we are testing the program
+// the following will be excluded when we are building for release
+// or debugging.
 #[cfg(test)]
 mod tests {
     use crate::z_order_2d::z_cut_2d::ZCut;
     use crate::z_order_2d::z_index_2d::ZIndex;
     use std::time::SystemTime;
 
+    /**
+    this test verifies that the Z-order curve travelsal functions.
+    it also should verify that the curve travelsal at least runs
+    fast enough to flip about 10,0000,000 bools in the specified
+    range from false to true.
+
+    note: I did rip this from my experiment, this test is more
+    of a sanity check than anything, as if this fails, that means
+    something went seriously wrong.
+    */
     #[test]
     fn main() {
         println!("Hello, world!");
@@ -41,7 +58,7 @@ mod tests {
 
         for c in 0..(display_size * display_size) {
             let index = ZIndex::new(c as u64);
-            debug_display[(index.x() + index.y() * display_size as u64) as usize] = storage[c];
+            debug_display[index.x() as usize + index.y() as usize * display_size] = storage[c];
         }
 
         for y in 0..display_size {

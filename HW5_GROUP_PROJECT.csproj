@@ -27,22 +27,57 @@
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />
   </Target>
-  <Target Name="Build Rust Lib" BeforeTargets="PreBuildEvent">
-    <Message Text="Building rust dependency" Importance="High" />
+
+  <!-- build rust dependency on build for release / debug -->
+  <Target 
+    Name="BuildRustLibDebug" 
+    BeforeTargets="PreBuildEvent"
+    Condition="'$(Configuration)' == 'Debug'">
+    <Message Text="Building rust dependency for debug" Importance="High" />
     <Exec 
       WorkingDirectory="$(MSBuildProjectDirectory)/falling-sand-lib" 
       Command="cargo build"/>
   </Target>
-  <ItemGroup>
+  <!-- hacky code duplication to use release rust binaries on release build -->
+  <Target 
+    Name="BuildRustLibRelease" 
+    BeforeTargets="PreBuildEvent"
+    Condition="'$(Configuration)' != 'Debug'">
+    <Message Text="Building rust dependency for release" Importance="High" />
+    <Exec 
+      WorkingDirectory="$(MSBuildProjectDirectory)/falling-sand-lib" 
+      Command="cargo build --release"/>
+  </Target>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <!-- Include for linux -->
     <Content Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'" 
               Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/debug/libfalling_sand_lib.so">
       <Link>libfalling_sand_lib.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Include for windows -->
     <Content Condition="'$(OS)' == 'Windows_NT'" 
               Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/debug/falling_sand_lib.dll">
       <Link>falling_sand_lib.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- sorry mac os. -->
+  </ItemGroup>
+  <!-- hacky code duplication to use release rust binaries on release build -->
+  <ItemGroup Condition="'$(Configuration)' != 'Debug'">
+    <!-- Include for linux -->
+    <Content Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'" 
+              Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/release/libfalling_sand_lib.so">
+      <Link>libfalling_sand_lib.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- Include for windows -->
+    <Content Condition="'$(OS)' == 'Windows_NT'" 
+              Include="$(MSBuildProjectDirectory)/falling-sand-lib/target/release/falling_sand_lib.dll">
+      <Link>falling_sand_lib.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- sorry mac os. -->
   </ItemGroup>
 </Project>

@@ -2,12 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace HW5_GROUP_PROJECT.extern_testing{
-
-    [StructLayout(LayoutKind.Sequential, Size = 8, Pack = 1)]
-    struct ZIndex
-    {
-        ulong index;
-    }
     class FallingSand: IDisposable
     {
 
@@ -29,12 +23,7 @@ namespace HW5_GROUP_PROJECT.extern_testing{
 
         public FallingSand()
         {
-            ZIndex index = new ZIndex();
             handle = CreateHandle();
-            Console.WriteLine($"{Test(ref handle, index)}");
-            Console.WriteLine($"{Test(ref handle, index)}");
-            Console.WriteLine($"{Test(ref handle, index)}");
-            Console.WriteLine($"{Test(ref handle, index)}");
         }
 
         public void Dispose()

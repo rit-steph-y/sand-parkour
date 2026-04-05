@@ -28,6 +28,6 @@ impl FallingSandChunk{
 
 impl FallingSandChunk{
     pub fn get_tile(&self, index: &ZIndex) -> &FallingSandTile{
-        &self.data[index.index() as usize]
+        &self.data[Self::get_index_in_chunk(index).index() as usize]
     } 
 }

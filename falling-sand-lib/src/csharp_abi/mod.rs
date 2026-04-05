@@ -17,12 +17,12 @@ impl FallingSandGridHandle {
         }
     }
     #[unsafe(no_mangle)]
-    pub extern "C" fn test_falling_sand_handle(&self, position: ZIndex) -> u16{
+    pub extern "C" fn test_falling_sand_handle(&self, position: ZIndex) -> u16 {
         let b = self.internal_val.borrow();
         return b.get_tile(&position);
     }
     #[unsafe(no_mangle)]
-    pub extern "C" fn dispose_falling_sand_handle(self){
+    pub extern "C" fn dispose_falling_sand_handle(self) {
         drop(self)
     }
 }

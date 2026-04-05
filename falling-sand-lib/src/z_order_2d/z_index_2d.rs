@@ -32,17 +32,17 @@ impl ZIndex {
     pub fn new(index: u64) -> Self {
         Self { index }
     }
-    /// resets bits from x value and then replaces 
+    /// resets bits from x value and then replaces
     /// them with the new bits specified.
-    /// 
+    ///
     /// unsafe due to not checking if bits is only in x positions
     pub unsafe fn set_x_bits(&mut self, bits: u64) {
         self.index &= Y_BITS;
         self.index |= bits;
     }
-    /// resets bits from y value and then replaces 
+    /// resets bits from y value and then replaces
     /// them with the new bits specified.
-    /// 
+    ///
     /// unsafe due to not checking if bits is only in y positions
     pub unsafe fn set_y_bits(&mut self, bits: u64) {
         self.index &= X_BITS;
@@ -73,11 +73,11 @@ impl ZIndex {
 }
 
 #[cfg(test)]
-mod tests{
+mod tests {
     use crate::z_order_2d::z_index_2d::ZIndex;
 
     #[test]
-    fn test_construct_from_coords(){
+    fn test_construct_from_coords() {
         let index = ZIndex::from_coords(0b10010101, 0b1001000);
         assert_eq!(0b110000110010001, index.index())
     }

@@ -16,15 +16,15 @@ mod tests {
     use std::time::SystemTime;
 
     /**
-     this test verifies that the Z-order curve travelsal functions.
-     it also should verify that the curve travelsal at least runs
-     fast enough to flip about 10,0000,000 bools in the specified 
-     range from false to true.
+    this test verifies that the Z-order curve travelsal functions.
+    it also should verify that the curve travelsal at least runs
+    fast enough to flip about 10,0000,000 bools in the specified
+    range from false to true.
 
-     note: I did rip this from my experiment, this test is more
-     of a sanity check than anything, as if this fails, that means
-     something went seriously wrong.
-     */
+    note: I did rip this from my experiment, this test is more
+    of a sanity check than anything, as if this fails, that means
+    something went seriously wrong.
+    */
     #[test]
     fn main() {
         println!("Hello, world!");

@@ -24,7 +24,7 @@ impl FallingSandGrid {
         if let Some(chunk) = self.chunks.get(&chunk_id) {
             return chunk.get_tile(index).id();
         }
-        FallingSandTileId::INVALID
+        FallingSandTileId::Invalid
     }
     pub fn place_tile(&mut self, index: ZOrderIndex, id: FallingSandTileId) {
         let chunk_id = FallingSandChunk::get_chunk_id(index);
@@ -42,12 +42,13 @@ impl FallingSandGrid {
 }
 
 #[cfg(test)]
-mod tests{
-    use crate::falling_sand_2d::{ falling_sand_grid::FallingSandGrid, falling_sand_tile::FallingSandTileId};
+mod tests {
+    use crate::falling_sand_2d::falling_sand_grid::FallingSandGrid;
+    use crate::falling_sand_2d::falling_sand_tile::FallingSandTileId;
 
     #[test]
-    fn test_place_tile_at_coords(){
+    fn test_place_tile_at_coords() {
         let mut instance = FallingSandGrid::new();
-        instance.place_tile_at_coords(3, 3, FallingSandTileId::AIR);
+        instance.place_tile_at_coords(3, 3, FallingSandTileId::Air);
     }
 }

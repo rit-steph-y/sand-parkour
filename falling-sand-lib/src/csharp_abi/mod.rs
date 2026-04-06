@@ -26,7 +26,12 @@ impl FallingSandGridHandle {
             .unwrap_or_default()
     }
     #[unsafe(no_mangle)]
-    pub extern "C" fn place_tile_at_coords_sand_handle(&self, x: u32, y: u32, id: FallingSandTileId) {
+    pub extern "C" fn place_tile_at_coords_sand_handle(
+        &self,
+        x: u32,
+        y: u32,
+        id: FallingSandTileId,
+    ) {
         self.self_mut(|mut s| s.place_tile_at_coords(x, y, id));
     }
     #[unsafe(no_mangle)]

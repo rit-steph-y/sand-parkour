@@ -1,4 +1,3 @@
-
 const SUBPIXEL_CENTER: u8 = 0x77;
 const SUBPIXEL_BITS: u8 = 4;
 const SUBPIXEL_MASK: u8 = 0xF;
@@ -20,17 +19,12 @@ pub struct FallingSandTile {
 
 #[allow(unused)]
 #[repr(u16)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub enum FallingSandTileId {
-    INVALID = 0,
-    AIR = 1,
-    SAND = 2,
-}
-
-impl Default for FallingSandTileId {
-    fn default() -> Self {
-        Self::INVALID
-    }
+    #[default]
+    Invalid = 0,
+    Air = 1,
+    Sand = 2,
 }
 
 #[allow(unused)]
@@ -42,17 +36,17 @@ impl FallingSandTile {
         Self {
             velocity_x: 0,
             velocity_y: 0,
-            id: id,
+            id,
             subpixel: SUBPIXEL_CENTER,
         }
     }
-    pub fn subpixel_x(&self) -> u8{
+    pub fn subpixel_x(self) -> u8 {
         self.subpixel & SUBPIXEL_MASK
     }
-    pub fn subpixel_y(&self) -> u8{
+    pub fn subpixel_y(self) -> u8 {
         (self.subpixel >> SUBPIXEL_BITS) & SUBPIXEL_MASK
     }
-    pub fn id(&self) -> FallingSandTileId {
+    pub fn id(self) -> FallingSandTileId {
         self.id
     }
     // pub fn get_move_dir(&self){

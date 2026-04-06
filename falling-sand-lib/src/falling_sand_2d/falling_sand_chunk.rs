@@ -35,11 +35,11 @@ impl FallingSandChunk {
 
 impl FallingSandChunk {
     pub fn new() -> Self {
-        Self::new_from_tile_id(FallingSandTileId::INVALID)
+        Self::new_from_tile_id(FallingSandTileId::Invalid)
     }
     pub fn new_from_tile_id(id: FallingSandTileId) -> Self {
         Self {
-            data: vec![FallingSandTile::new_from_id(id);CHUNK_WIDTH * CHUNK_WIDTH],
+            data: vec![FallingSandTile::new_from_id(id); CHUNK_WIDTH * CHUNK_WIDTH],
             last_update_range: None,
         }
     }
@@ -55,21 +55,23 @@ impl FallingSandChunk {
 }
 
 #[cfg(test)]
-mod tests{
-    use crate::{falling_sand_2d::{falling_sand_chunk::FallingSandChunk, falling_sand_tile::FallingSandTileId}, z_order_2d::z_index_2d::ZOrderIndex};
+mod tests {
+    use crate::falling_sand_2d::falling_sand_chunk::FallingSandChunk;
+    use crate::falling_sand_2d::falling_sand_tile::FallingSandTileId;
+    use crate::z_order_2d::z_index_2d::ZOrderIndex;
 
     // test to check if the alloc of a chunk itself will trigger stack overflow.
     #[test]
-    fn try_alloc_chunk(){
-        let test_chunk = FallingSandChunk::new_from_tile_id(FallingSandTileId::AIR);
+    fn try_alloc_chunk() {
+        let test_chunk = FallingSandChunk::new_from_tile_id(FallingSandTileId::Air);
         drop(test_chunk);
     }
 
     #[test]
-    fn verify_set_changes(){
-        let mut test_chunk = FallingSandChunk::new_from_tile_id(FallingSandTileId::AIR);
-        let index = ZOrderIndex::from_coords(10,10);
-        test_chunk.place_tile(index, FallingSandTileId::SAND);
-        assert_eq!(test_chunk.get_tile(index).id(), FallingSandTileId::SAND);
+    fn verify_set_changes() {
+        let mut test_chunk = FallingSandChunk::new_from_tile_id(FallingSandTileId::Air);
+        let index = ZOrderIndex::from_coords(10, 10);
+        test_chunk.place_tile(index, FallingSandTileId::Sand);
+        assert_eq!(test_chunk.get_tile(index).id(), FallingSandTileId::Sand);
     }
 }

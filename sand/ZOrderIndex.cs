@@ -1,0 +1,109 @@
+namespace HW5_GROUP_PROJECT.sand{
+    /**
+    z index struct to store 2D coordinates as inherently interleaved bits.
+    */
+    public struct ZOrderIndex
+    {
+        ulong index;
+
+        public ZOrderIndex(ulong i)
+        {
+            this.index = i;
+        }
+
+        public static implicit operator ulong(ZOrderIndex index) => index.index;
+        public static implicit operator ZOrderIndex(ulong u) => new(u);
+
+    }
+}
+/*
+// allow for ZIndex to automatically be
+// converted to type u64
+// you can't autoconvert this to a usize since
+// that would cause hard to predict behavior
+// on 32 bit targets, but also, who in the world
+// is still using 32 bit?
+// I mean I doubt we will be compiling to WASM
+// but it's still good to be cautious to not
+// set up a lame checkov's gun or whatever it's called.
+impl From<ZOrderIndex> for u64 {
+    fn from(val: ZOrderIndex) -> Self {
+        val.index
+    }
+}
+
+pub const X_BITS: u64 = 0x5555_5555_5555_5555;
+
+pub const Y_BITS: u64 = 0xaaaa_aaaa_aaaa_aaaa;
+
+impl Debug for ZOrderIndex {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "(x:{:b},y:{:b})", self.x(), self.y())
+    }
+}
+
+impl ZOrderIndex {
+    // creates a z-index using a provided x and y value (unsigned)
+    pub fn from_coords(x: u32, y: u32) -> Self {
+        let x = u64::from(x);
+        let y = u64::from(y);
+        let index = unsafe { _pdep_u64(x, X_BITS) | _pdep_u64(y, Y_BITS) };
+        Self::new(index)
+    }
+    pub fn new(index: u64) -> Self {
+        Self { index }
+    }
+    /// resets bits from x value and then replaces
+    /// them with the new bits specified.
+    ///
+    /// unsafe due to not checking if bits is only in x positions
+    pub unsafe fn set_x_bits(&mut self, bits: u64) {
+        self.index &= Y_BITS;
+        self.index |= bits;
+    }
+    /// resets bits from y value and then replaces
+    /// them with the new bits specified.
+    ///
+    /// unsafe due to not checking if bits is only in y positions
+    pub unsafe fn set_y_bits(&mut self, bits: u64) {
+        self.index &= X_BITS;
+        self.index |= bits;
+    }
+    /// masks then returns the bits in the index that correspond to x value,
+    /// but does not collect them.
+    pub fn x_bits(self) -> u64 {
+        self.index & X_BITS
+    }
+    /// masks then returns the bits in the index that correspond to y value,
+    /// but does not collect them.
+    pub fn y_bits(self) -> u64 {
+        self.index & Y_BITS
+    }
+    /// extracts the x value that this index represents.
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn x(self) -> u32 {
+        (unsafe { _pext_u64(self.index, X_BITS) }) as u32
+    }
+    /// extracts the y value that this index represents.
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn y(self) -> u32 {
+        (unsafe { _pext_u64(self.index, Y_BITS) }) as u32
+    }
+    /// returns the wrapped index value.
+    pub fn index(self) -> u64 {
+        self.index
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::z_order_2d::z_index_2d::ZOrderIndex;
+
+    #[test]
+    fn test_construct_from_coords() {
+        let index = ZOrderIndex::from_coords(0b10010101, 0b1001000);
+        assert_eq!(0b110000110010001, index.index())
+    }
+}
+}
+*/

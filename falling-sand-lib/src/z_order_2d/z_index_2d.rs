@@ -17,11 +17,11 @@ pub struct ZOrderIndex {
 // you can't autoconvert this to a usize since
 // that would cause hard to predict behavior
 // on 32 bit targets, but also, who in the world
-// is still using 32 bit? 
+// is still using 32 bit?
 // I mean I doubt we will be compiling to WASM
 // but it's still good to be cautious to not
 // set up a lame checkov's gun or whatever it's called.
-impl From<ZOrderIndex> for u64{
+impl From<ZOrderIndex> for u64 {
     fn from(val: ZOrderIndex) -> Self {
         val.index
     }
@@ -40,7 +40,9 @@ impl Debug for ZOrderIndex {
 impl ZOrderIndex {
     // creates a z-index using a provided x and y value (unsigned)
     pub fn from_coords(x: u32, y: u32) -> Self {
-        let index = unsafe { _pdep_u64(u64::from(x), X_BITS) | _pdep_u64(u64::from(y), Y_BITS) };
+        let x = u64::from(x);
+        let y = u64::from(y);
+        let index = unsafe { _pdep_u64(x, X_BITS) | _pdep_u64(y, Y_BITS) };
         Self::new(index)
     }
     pub fn new(index: u64) -> Self {

@@ -1,3 +1,7 @@
+
+const SUBPIXEL_CENTER: u8 = 0x77;
+const SUBPIXEL_BITS: u8 = 4;
+const SUBPIXEL_MASK: u8 = 0xF;
 /**
 a single falling sand tile, and all data associated
 all falling sand tiles will have a velocity, and a subpixel
@@ -6,9 +10,6 @@ position.
 the id of the tile determines what kind of tile it
 is, and how that behaves.
  */
-
-const SUBPIXEL_CENTER: u8 = 0b0111_1111;
-
 #[derive(Clone, Copy)]
 pub struct FallingSandTile {
     velocity_x: u8,
@@ -17,6 +18,7 @@ pub struct FallingSandTile {
     subpixel: u8,
 }
 
+#[allow(unused)]
 #[repr(u16)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum FallingSandTileId {
@@ -31,6 +33,7 @@ impl Default for FallingSandTileId {
     }
 }
 
+#[allow(unused)]
 impl FallingSandTile {
     pub fn new() -> Self {
         Self::new_from_id(FallingSandTileId::default())
@@ -43,7 +46,16 @@ impl FallingSandTile {
             subpixel: SUBPIXEL_CENTER,
         }
     }
+    pub fn subpixel_x(&self) -> u8{
+        self.subpixel & SUBPIXEL_MASK
+    }
+    pub fn subpixel_y(&self) -> u8{
+        (self.subpixel >> SUBPIXEL_BITS) & SUBPIXEL_MASK
+    }
     pub fn id(&self) -> FallingSandTileId {
         self.id
     }
+    // pub fn get_move_dir(&self){
+
+    // }
 }

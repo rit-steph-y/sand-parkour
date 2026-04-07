@@ -42,16 +42,17 @@ byte interpet(in SandPixel pixel)
 uint xRange = 800;
 uint yRange = 800;
 
+Random r = new(0);
 for(uint x = 0; x < xRange; x++)
 {
     for(uint y = 0; y < yRange; y++)
     {
-        grid.SetPixel(new(x + 1,y + 1), Random.Shared.Next(2) == 0? PixelId.AIR: PixelId.SAND);
+        grid.SetPixel(new(x + 1,y + 1), r.Next(2) == 0? PixelId.AIR: PixelId.SAND);
     }
 }
 
 DateTime time = DateTime.Now;
-for(int i = 0; i < 100; i++){
+for(int i = 0; i < 1000; i++){
     // Thread.Sleep(100);
     
     // for(uint y = 0; y < 34; y++)
@@ -74,4 +75,4 @@ for(int i = 0; i < 100; i++){
     // }
     grid.Update(table, interpet, (byte)(i % 4));
 }
-Console.WriteLine($"{((DateTime.Now - time)/ 100f).TotalMicroseconds}");
+Console.WriteLine($"{((DateTime.Now - time)/ 1000f).TotalMicroseconds}");

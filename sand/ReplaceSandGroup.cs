@@ -27,7 +27,7 @@ namespace HW5_GROUP_PROJECT.sand
         /// apply this operation.
         /// </summary>
         /// <param name="src">source sand group</param>
-        public void Apply(ref SrcSandGroup src)
+        public readonly void Apply(ref SrcSandGroup src)
         {
             SandPixel newTopLeft = this.TopLeft.Apply(ref src);
             SandPixel newTopRight = this.TopRight.Apply(ref src);

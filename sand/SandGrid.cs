@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace HW5_GROUP_PROJECT.sand
@@ -49,26 +48,23 @@ namespace HW5_GROUP_PROJECT.sand
                 SrcSandGroup sourceGroup;
                 ZOrderIndex index = current;
                 ZOrderIndex left = index.XBits();
-                ZOrderIndex right = index.IncrXKeepX();
+                ZOrderIndex right = index.XBitsPlus1();
                 ZOrderIndex top = index.YBits();
-                ZOrderIndex bottom = index.IncrYKeepY();
-                // Console.Write($"{top.Y},{bottom.Y},{left.X},{right.X}");
+                ZOrderIndex bottom = index.YBitsPlus1();
                 sourceGroup.TopLeft = ref this.GetPixel(top | left);
                 sourceGroup.TopRight = ref this.GetPixel(top | right);
                 sourceGroup.BottomLeft = ref this.GetPixel(bottom | left);
                 sourceGroup.BottomRight = ref this.GetPixel(bottom | right);
                 lut.Update(ref sourceGroup, interpret);
-                // ReplaceSandGroup group = new();
-                // group = new();
-                // group.Apply(ref sourceGroup);
                 current += 4;
             }
         }
 
         public void SetPixel(ZOrderIndex index, PixelId id)
         {
-            this.GetPixel(index).id = id;
-            this.GetPixel(index).flags = 0;
+            ref SandPixel sandPixel = ref this.GetPixel(index);
+            sandPixel.id = id;
+            sandPixel.flags = 0;
         }
         public ref SandPixel GetPixel(ZOrderIndex index)
         {

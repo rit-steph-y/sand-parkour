@@ -31,39 +31,24 @@ namespace HW5_GROUP_PROJECT.sand{
         public uint Y => ((uint)System.Runtime.Intrinsics.X86.Bmi2.X64.ParallelBitExtract(this.index, Y_BITS));
         public uint X => ((uint)System.Runtime.Intrinsics.X86.Bmi2.X64.ParallelBitExtract(this.index, X_BITS));
 
+        public readonly ZOrderIndex XBits()
+        {
+            return this.index & X_BITS;
+        }
+
         public readonly ZOrderIndex YBits()
         {
             return this.index & Y_BITS;
         }
 
-        public readonly ZOrderIndex XBits()
-        {
-            return this.index & X_BITS;
-        }
-        
-        public readonly ZOrderIndex IncrX()
-        {
-            return this.index & Y_BITS | this.IncrXKeepX();
-        }
-        public readonly ZOrderIndex IncrXKeepX()
+        public readonly ZOrderIndex XBitsPlus1()
         {
             return ((this.index | Y_BITS) + 1) & X_BITS;
         }
-        public readonly ZOrderIndex DecrX()
-        {
-            return this.index & Y_BITS | (((this.index & X_BITS) - 1) & X_BITS);
-        }
-        public readonly ZOrderIndex IncrY()
-        {
-            return this.index & X_BITS | IncrYKeepY();
-        }
-        public readonly ZOrderIndex IncrYKeepY()
+
+        public readonly ZOrderIndex YBitsPlus1()
         {
             return ((this.index | X_BITS) + 1) & Y_BITS;            
         }
-        public readonly ZOrderIndex DecrY()
-        {
-            return this.index & X_BITS | (((this.index & Y_BITS) - 1) & Y_BITS);
-        } 
     }
 }

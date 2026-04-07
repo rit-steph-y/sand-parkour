@@ -3,11 +3,14 @@ namespace HW5_GROUP_PROJECT.sand
     public struct LookupTable
     {
         public delegate byte InterpretPixel(in SandPixel pixel);
-        byte cellTypes;
-        ReplaceSandGroup[] lookup;
+        private readonly byte cellTypes;
+        private readonly uint cellTypesSquared;
+        private ReplaceSandGroup[] lookup;
         public LookupTable(byte types)
         {
             this.cellTypes = types;
+            this.cellTypesSquared = this.cellTypes;
+            this.cellTypesSquared *= this.cellTypes;
             // raise types to power of 4 for size of the replace LUT
             int total = types;
             total *= total;
@@ -35,26 +38,25 @@ namespace HW5_GROUP_PROJECT.sand
 
         public void Update(ref SrcSandGroup src, InterpretPixel interpret)
         {
-            uint i = interpret.Invoke(src.BottomRight);
-            i *= this.cellTypes;
-            i += interpret.Invoke(src.BottomLeft);
-            i *= this.cellTypes;
-            i += interpret.Invoke(src.TopRight);
-            i *= this.cellTypes;
-            i += interpret.Invoke(src.TopLeft);
+            uint i = this.Lookup(
+                interpret.Invoke(src.TopLeft),
+                interpret.Invoke(src.TopRight),
+                interpret.Invoke(src.BottomLeft),
+                interpret.Invoke(src.BottomRight)
+            );
             this.lookup[i].Apply(ref src);
         }
 
         public void SetLookup(byte tl, byte tr, byte bl, byte br, ReplaceSandGroup group)
         {
-            uint i = br;
-            i *= this.cellTypes;
-            i += bl;
-            i *= this.cellTypes;
-            i += tr;
-            i *= this.cellTypes;
-            i += tl;
-            this.lookup[i] = group;
+            this.lookup[this.Lookup(tl,tr,bl,br)] = group;
+        }
+        
+        private readonly uint Lookup(byte tl, byte tr, byte bl, byte br)
+        {
+            uint lower = (uint)br * this.cellTypes + bl;
+            uint upper = (uint)tr * this.cellTypes + tl;
+            return lower * this.cellTypesSquared + upper;
         }
     }
 }

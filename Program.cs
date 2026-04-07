@@ -39,41 +39,42 @@ byte interpet(in SandPixel pixel)
                                             (byte)0;
 }
 
-uint xRange = 32;
-uint yRange = 32;
+uint xRange = 800;
+uint yRange = 800;
 
+Random r = new(0);
 for(uint x = 0; x < xRange; x++)
 {
     for(uint y = 0; y < yRange; y++)
     {
-        grid.SetPixel(new(x + 1,y + 1), Random.Shared.Next(2) == 0? PixelId.AIR: PixelId.SAND);
+        grid.SetPixel(new(x + 1,y + 1), r.Next(2) == 0? PixelId.AIR: PixelId.SAND);
     }
 }
 
 DateTime time = DateTime.Now;
-for(int i = 0; i < 100; i++){
-    
-    for(uint y = 0; y < 34; y++)
-    {
-        for(uint x = 0; x < 34; x++)
-        {
-            switch (grid.GetPixel(new(x, y)).id){
-                case PixelId.AIR:
-                    Console.Write(" ");
-                    continue;
-                case PixelId.INVALID:
-                    Console.Write("x");
-                    continue;
-                case PixelId.SAND:
-                    Console.Write("S");
-                    continue;
-            }
-        }
-        Console.WriteLine();
-    }
+for(int i = 0; i < 1000; i++){
+    // Thread.Sleep(100);
+    // for(uint y = 0; y < 34; y++)
+    // {
+    //     for(uint x = 0; x < 34; x++)
+    //     {
+    //         switch (grid.GetPixel(new(x, y)).id){
+    //             case PixelId.AIR:
+    //                 Console.Write(" ");
+    //                 continue;
+    //             case PixelId.INVALID:
+    //                 Console.Write("x");
+    //                 continue;
+    //             case PixelId.SAND:
+    //                 Console.Write("S");
+    //                 continue;
+    //         }
+    //     }
+    //     Console.WriteLine();
+    // }
     grid.Update(table, interpet, (byte)(i % 4));
 }
-Console.WriteLine($"{((DateTime.Now - time)/ 100f).TotalMicroseconds}");
+Console.WriteLine($"avg: {((DateTime.Now - time)/ 1000f).TotalMilliseconds}ms per tick");
 
 using var game = new  HW5_GROUP_PROJECT.SandGame();
 game.Run();

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace HW5_GROUP_PROJECT.sand
@@ -47,7 +48,17 @@ namespace HW5_GROUP_PROJECT.sand
             this.pixel = pixel;
             this.type = ReplaceOperationType.Spawn;
         }
-
+        
+        /// <summary>
+        /// applies the replace operation to the target sand pixel.
+        /// 
+        /// note: aggressive inlining on this saved about .3ms which is
+        /// pretty good, I think we have gotten close enough to the speed
+        /// of light.
+        /// </summary>
+        /// <param name="src">source sand group</param>
+        /// <returns>new pixel generated.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly SandPixel Apply(ref SrcSandGroup src)
         {
             if (this.type == ReplaceOperationType.Move){

@@ -2,6 +2,16 @@ namespace HW5_GROUP_PROJECT.sand
 {
     /// <summary>
     /// complete madness.
+    /// 
+    /// using effectively a union to try to save on memory cost.
+    /// why.
+    /// 
+    /// it's not even a c# feature
+    /// 
+    /// then cram it into the 4 group that we will use it in.
+    /// seriously
+    /// 
+    /// normal ideas.
     /// </summary>
     public struct ReplaceSandGroup
     {

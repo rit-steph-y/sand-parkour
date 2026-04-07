@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace HW5_GROUP_PROJECT.sand
 {
@@ -38,12 +39,21 @@ namespace HW5_GROUP_PROJECT.sand
             this.lastOptChunk = this.chunks[z];
             this.lastHash = z;
         }
-
-        static readonly ZOrderIndex[] starts = [new(1,1),new(0,0),new(0,1),new(1,0)];
-
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private readonly ZOrderIndex GetStart(byte offsetStep)
+        {
+            return offsetStep switch
+            {
+                0 => 0b11,
+                1 => 0b00,
+                2 => 0b01,
+                _ => 0b10
+            };
+        }
         public void Update(in LookupTable lut, LookupTable.InterpretPixel interpret, byte offsetStep)
         {
-            ZOrderIndex current = starts[offsetStep];
+            ZOrderIndex current = this.GetStart(offsetStep);
             while (current <= this.max)
             {
                 SrcSandGroup sourceGroup;
@@ -94,6 +104,7 @@ namespace HW5_GROUP_PROJECT.sand
         return ref this.lastOptChunk.pixels[sub_z];
         ```
         */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref SandPixel GetPixel(ZOrderIndex index)
         {
             ToChunkAndSubpos(index, out ZOrderIndex chunkZ, out uint sub_z);
@@ -105,6 +116,7 @@ namespace HW5_GROUP_PROJECT.sand
             return ref this.lastOptChunk.pixels[sub_z];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ToChunkAndSubpos(ZOrderIndex index, out ZOrderIndex z, out uint sub_z)
         {
             z = GetChunk(index);

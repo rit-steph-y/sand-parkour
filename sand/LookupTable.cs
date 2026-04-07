@@ -20,7 +20,7 @@ namespace HW5_GROUP_PROJECT.sand
 
         public delegate ReplaceSandGroup GroupGen(byte tl, byte tr, byte bl, byte br);
 
-        public void Build(GroupGen builder){
+        public readonly void Build(GroupGen builder){
             for(byte tl = 0; tl < this.cellTypes; tl++)
             {
                 for(byte tr = 0; tr < this.cellTypes; tr++)
@@ -47,7 +47,7 @@ namespace HW5_GROUP_PROJECT.sand
             this.lookup[i].Apply(ref src);
         }
 
-        public void SetLookup(byte tl, byte tr, byte bl, byte br, ReplaceSandGroup group)
+        public readonly void SetLookup(byte tl, byte tr, byte bl, byte br, ReplaceSandGroup group)
         {
             this.lookup[this.Lookup(tl,tr,bl,br)] = group;
         }

@@ -5,7 +5,7 @@ namespace HW5_GROUP_PROJECT.sand
     public struct SandGrid
     {
         public const ulong CHUNK_WIDTH = 1 << CHUNK_BITS;
-        public const ulong INDEX_IN_CHUNK_MASK = (1 << CHUNK_BITS_TOTAL) - 1;
+        public const uint INDEX_IN_CHUNK_MASK = (1 << CHUNK_BITS_TOTAL) - 1;
         public const int CHUNK_BITS = 10;
         private const int CHUNK_BITS_TOTAL = CHUNK_BITS * 2;
 
@@ -13,9 +13,10 @@ namespace HW5_GROUP_PROJECT.sand
         {
             return index >> CHUNK_BITS_TOTAL;
         }
-        public static ZOrderIndex GetPosInChunk(ZOrderIndex index)
+        public static uint GetPosInChunk(ZOrderIndex index)
         {
-            return index & INDEX_IN_CHUNK_MASK;
+            uint u = (uint)(ulong)index;
+            return u & INDEX_IN_CHUNK_MASK;
         }
 
         private readonly Dictionary<ZOrderIndex, SandChunk> chunks;
@@ -25,7 +26,7 @@ namespace HW5_GROUP_PROJECT.sand
 
         public SandGrid()
         {
-            this.chunks = new();
+            this.chunks = [];
             this.AddChunk(0);
             this.AddChunk(1);
             this.AddChunk(2);
@@ -66,17 +67,48 @@ namespace HW5_GROUP_PROJECT.sand
             sandPixel.id = id;
             sandPixel.flags = 0;
         }
+
+        /**
+        note: the previous implementation seemed to have severely messed
+        up the performance, idk why this here just breaks,
+        
+        I suspect it has something to do with the fact that C# doesn't 
+        have very good codegen, and/or that the code here causes a much 
+        longer hold up on branching since the two return values are not 
+        seen as the same, possibly the newer implementation actually jumps
+        in control flow less even in release.
+
+        alternative theory: tail call optimizations here may have been impossible
+        to perform for the previous implementation, since the two return branches
+        weren't the "same" value. The reason I believe this theory could be the
+        case is because it seems like when profiling the release mode this function
+        did not show up on the function call chart.
+
+        ```
+        if (chunkZ == this.lastHash)
+        {
+            return ref this.lastOptChunk.pixels[sub_z];
+        }
+        this.lastOptChunk = this.chunks[chunkZ];
+        this.lastHash = chunkZ;
+        return ref this.lastOptChunk.pixels[sub_z];
+        ```
+        */
         public ref SandPixel GetPixel(ZOrderIndex index)
         {
-            ZOrderIndex z = GetChunk(index);
-            ZOrderIndex sub_z = GetPosInChunk(index);
-            if(z == this.lastHash)
+            ToChunkAndSubpos(index, out ZOrderIndex chunkZ, out uint sub_z);
+            if (chunkZ != this.lastHash)
             {
-                return ref this.lastOptChunk.pixels[sub_z];
+                this.lastOptChunk = this.chunks[chunkZ];
+                this.lastHash = chunkZ;
             }
-            this.lastOptChunk = chunks[z];
-            this.lastHash = z;
-            return ref this.chunks[z].pixels[sub_z];
+            return ref this.lastOptChunk.pixels[sub_z];
+        }
+
+        private static void ToChunkAndSubpos(ZOrderIndex index, out ZOrderIndex z, out uint sub_z)
+        {
+            z = GetChunk(index);
+            sub_z = GetPosInChunk(index);
         }
     }
 

@@ -30,7 +30,7 @@ namespace HW5_GROUP_PROJECT.sand
     [StructLayout(LayoutKind.Explicit)]
     struct ReplaceOperation
     {
-        [FieldOffset(4)] public ReplaceOperationType type;
+        [FieldOffset(2)] public ReplaceOperationType type;
         //use if struct is a spawn operation
         [FieldOffset(0)] SandPixel pixel;
         //use if struct is a move operation

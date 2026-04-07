@@ -41,7 +41,7 @@ namespace HW5_GROUP_PROJECT.sand
 
         static readonly ZOrderIndex[] starts = [new(1,1),new(0,0),new(0,1),new(1,0)];
 
-        public void Update(in LookupTable lut, InterpretPixel interpret, byte offsetStep)
+        public void Update(in LookupTable lut, LookupTable.InterpretPixel interpret, byte offsetStep)
         {
             ZOrderIndex current = starts[offsetStep];
             while (current <= this.max)

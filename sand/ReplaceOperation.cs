@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace HW5_GROUP_PROJECT.sand
 {
 
-    enum ReplaceOperationType: byte
+    public enum ReplaceOperationType: byte
     {
         Move = 0,
         Spawn = 1,
@@ -28,9 +28,9 @@ namespace HW5_GROUP_PROJECT.sand
     /// sorry if it doesn't, I tried... みんなさん、ごめんなさい。
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    struct ReplaceOperation
+    public struct ReplaceOperation
     {
-        [FieldOffset(2)] public ReplaceOperationType type;
+        [FieldOffset(4)] public ReplaceOperationType type;
         //use if struct is a spawn operation
         [FieldOffset(0)] SandPixel pixel;
         //use if struct is a move operation
@@ -51,17 +51,13 @@ namespace HW5_GROUP_PROJECT.sand
         public readonly SandPixel Apply(ref SrcSandGroup src)
         {
             if (this.type == ReplaceOperationType.Move){
-                switch (Source)
+                return Source switch
                 {
-                    case 0:
-                        return src.TopLeft;
-                    case 1:
-                        return src.TopRight;
-                    case 2:
-                        return src.BottomLeft;
-                    default:
-                        return src.BottomRight;
-                }
+                    0 => src.TopLeft,
+                    1 => src.TopRight,
+                    2 => src.BottomLeft,
+                    _ => src.BottomRight,
+                };
             }
             return this.pixel;
         }

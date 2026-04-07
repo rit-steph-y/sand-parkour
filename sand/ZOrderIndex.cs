@@ -28,6 +28,8 @@ namespace HW5_GROUP_PROJECT.sand{
         public static ZOrderIndex operator <<(ZOrderIndex index, int amount) => new((ulong)index << amount);
         public static ZOrderIndex operator >>(ZOrderIndex index, int amount) => new((ulong)index >> amount);
         
+        public uint Y => ((uint)System.Runtime.Intrinsics.X86.Bmi2.X64.ParallelBitExtract(this.index, Y_BITS));
+        public uint X => ((uint)System.Runtime.Intrinsics.X86.Bmi2.X64.ParallelBitExtract(this.index, X_BITS));
 
         public readonly ZOrderIndex YBits()
         {

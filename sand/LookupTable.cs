@@ -21,13 +21,13 @@ namespace HW5_GROUP_PROJECT.sand
         public delegate ReplaceSandGroup GroupGen(byte tl, byte tr, byte bl, byte br);
 
         public void Build(GroupGen builder){
-            for(byte tl = 0; tl < 3; tl++)
+            for(byte tl = 0; tl < this.cellTypes; tl++)
             {
-                for(byte tr = 0; tr < 3; tr++)
+                for(byte tr = 0; tr < this.cellTypes; tr++)
                 {
-                    for(byte bl = 0; bl < 3; bl++)
+                    for(byte bl = 0; bl < this.cellTypes; bl++)
                     {
-                        for(byte br = 0; br < 3; br++)
+                        for(byte br = 0; br < this.cellTypes; br++)
                         {
                             this.SetLookup(tl, tr, bl, br, builder.Invoke(tl, tr, bl, br));
                         }

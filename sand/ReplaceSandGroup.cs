@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace HW5_GROUP_PROJECT.sand
 {
     /// <summary>
@@ -35,6 +37,8 @@ namespace HW5_GROUP_PROJECT.sand
 
         /// <summary>
         /// apply this operation.
+        /// 
+        /// DO NOT INLINE THIS, SEEMS TO SLOW DOWN PROGRAM?
         /// </summary>
         /// <param name="src">source sand group</param>
         public readonly void Apply(ref SrcSandGroup src)

@@ -52,7 +52,6 @@ for(uint x = 0; x < xRange; x++)
 
 DateTime time = DateTime.Now;
 for(int i = 0; i < 100; i++){
-    Thread.Sleep(100);
     
     for(uint y = 0; y < 34; y++)
     {
@@ -75,3 +74,6 @@ for(int i = 0; i < 100; i++){
     grid.Update(table, interpet, (byte)(i % 4));
 }
 Console.WriteLine($"{((DateTime.Now - time)/ 100f).TotalMicroseconds}");
+
+using var game = new  HW5_GROUP_PROJECT.SandGame();
+game.Run();

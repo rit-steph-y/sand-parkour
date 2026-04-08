@@ -5,6 +5,8 @@ namespace HW5_GROUP_PROJECT.sand
 {
     public struct SandGrid
     {
+        public delegate void DrawHandle(uint x, uint y, SandPixel pixel);
+
         public const ulong CHUNK_WIDTH = 1 << CHUNK_BITS;
         public const uint INDEX_IN_CHUNK_MASK = (1 << CHUNK_BITS_TOTAL) - 1;
         public const int CHUNK_BITS = 10;
@@ -68,6 +70,18 @@ namespace HW5_GROUP_PROJECT.sand
                 sourceGroup.BottomRight = ref this.GetPixel(bottom | right);
                 lut.Update(ref sourceGroup, interpret);
                 current += 4;
+            }
+        }
+
+        public void Draw(DrawHandle handle)
+        {
+            
+            ZOrderIndex current = 0;
+            while (current <= this.max)
+            {
+                SandPixel pixel = this.GetPixel(current);
+                handle.Invoke(current.X, current.Y, pixel);
+                current ++;
             }
         }
 

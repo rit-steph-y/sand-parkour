@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HW5_GROUP_PROJECT.sand;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -13,6 +14,7 @@ namespace HW5_GROUP_PROJECT
 
         private Color bgColor = Color.White;
         private Random rng = new Random();
+        private SandGridComponent sand;
 
         public SandGame()
         {
@@ -23,6 +25,7 @@ namespace HW5_GROUP_PROJECT
 
         protected override void Initialize()
         {
+            this.sand = new(this.GraphicsDevice);
             base.Initialize();
         }
 
@@ -36,6 +39,7 @@ namespace HW5_GROUP_PROJECT
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            this.sand.Update();
 
             base.Update(gameTime);
         }
@@ -45,7 +49,7 @@ namespace HW5_GROUP_PROJECT
             GraphicsDevice.Clear(bgColor);
 
             _spriteBatch.Begin();
-
+            this.sand.Draw(this._spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);

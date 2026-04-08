@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace HW5_GROUP_PROJECT.sand
 {
     /// <summary>
@@ -22,7 +20,12 @@ namespace HW5_GROUP_PROJECT.sand
         public ReplaceOperation BottomLeft;
         public ReplaceOperation BottomRight;
 
-        public ReplaceSandGroup(): this(new(0), new(1), new(2), new(3))
+        public static readonly ReplaceOperation GetTopLeft = new(0);
+        public static readonly ReplaceOperation GetTopRight = new(1);
+        public static readonly ReplaceOperation GetBottomLeft = new(2);
+        public static readonly ReplaceOperation GetBottomRight = new(3);
+
+        public ReplaceSandGroup(): this(GetTopLeft, GetTopRight, GetBottomLeft, GetBottomRight)
         {
         }
 
@@ -34,6 +37,13 @@ namespace HW5_GROUP_PROJECT.sand
             this.BottomRight = br;
         }
 
+        public void UpdateIsChanged()
+        {
+            this.TopLeft.UpdateIsChanged(GetTopLeft);
+            this.TopRight.UpdateIsChanged(GetTopRight);
+            this.BottomLeft.UpdateIsChanged(GetBottomLeft);
+            this.BottomRight.UpdateIsChanged(GetBottomRight);
+        }
 
         /// <summary>
         /// apply this operation.
@@ -41,16 +51,41 @@ namespace HW5_GROUP_PROJECT.sand
         /// DO NOT INLINE THIS, SEEMS TO SLOW DOWN PROGRAM?
         /// </summary>
         /// <param name="src">source sand group</param>
-        public readonly void Apply(ref SrcSandGroup src)
+        public readonly ChangeResult Apply(ref SrcSandGroup src)
         {
-            SandPixel newTopLeft = this.TopLeft.Apply(ref src);
-            SandPixel newTopRight = this.TopRight.Apply(ref src);
-            SandPixel newBottomLeft = this.BottomLeft.Apply(ref src);
-            SandPixel newBottomRight = this.BottomRight.Apply(ref src);
+            ChangeResult res = new();
+            SandPixel newTopLeft = this.TopLeft.Apply(ref src, out bool tlchange);
+            SandPixel newTopRight = this.TopRight.Apply(ref src, out bool trchange);
+            SandPixel newBottomLeft = this.BottomLeft.Apply(ref src, out bool blchange);
+            SandPixel newBottomRight = this.BottomRight.Apply(ref src, out bool brchange);
             src.TopLeft = newTopLeft;
             src.TopRight = newTopRight;
             src.BottomLeft = newBottomLeft;
             src.BottomRight = newBottomRight;
+            return res;
+        }
+    }
+
+    public struct ChangeResult
+    {
+        byte res;
+        public byte Min
+        {
+            get => (byte)(this.res & 0b11);
+            set => this.res |= value;
+        }
+        public byte Max
+        {
+            get => (byte)(this.res>>4 & 0b11);
+            set => this.res |= (byte)(value<<4);
+        }
+        public bool Changed
+        {
+            get => (this.res & 0b1000_0000) != 0;
+            set {
+                this.res &= 0b0111_1111;
+                this.res |= (byte)(value? 0b1000_0000: 0);
+            }
         }
     }
 }

@@ -49,6 +49,7 @@ namespace HW5_GROUP_PROJECT.sand
 
         public readonly void SetLookup(byte tl, byte tr, byte bl, byte br, ReplaceSandGroup group)
         {
+            group.UpdateIsChanged();
             this.lookup[this.Lookup(tl,tr,bl,br)] = group;
         }
         

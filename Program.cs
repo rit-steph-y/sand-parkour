@@ -39,8 +39,8 @@ byte interpet(in SandPixel pixel)
                                             (byte)0;
 }
 
-uint xRange = 800;
-uint yRange = 800;
+uint xRange = 32;
+uint yRange = 32;
 
 Random r = new(0);
 for(uint x = 0; x < xRange; x++)
@@ -53,7 +53,7 @@ for(uint x = 0; x < xRange; x++)
 
 DateTime time = DateTime.Now;
 for(int i = 0; i < 1000; i++){
-    // Thread.Sleep(100);
+    // // Thread.Sleep(100);
     // for(uint y = 0; y < 34; y++)
     // {
     //     for(uint x = 0; x < 34; x++)

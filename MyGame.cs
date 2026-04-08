@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -15,6 +17,8 @@ namespace HW5_GROUP_PROJECT
         private Color bgColor = Color.White;
         private Random rng = new Random();
         private SandGridComponent sand;
+
+        private float SandRollingAvgMs = 0;
 
         public SandGame()
         {
@@ -39,7 +43,12 @@ namespace HW5_GROUP_PROJECT
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             this.sand.Update();
+            stopwatch.Stop();
+            this.SandRollingAvgMs *= .7f;
+            this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
 
             base.Update(gameTime);
         }

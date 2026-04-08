@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,9 +12,15 @@ namespace HW5_GROUP_PROJECT.sand
         private LookupTable fallingSandTable;
         private byte updateCount = 0;
 
-        // public Vector2 scale;
-        // public Vector2 offset;
+        public int xScale = 1;
+        public int yScale = 1;
+        public int xOffset = 100;
+        public int yOffset = 100;
 
+        /// <summary>
+        /// the sand grid component
+        /// </summary>
+        /// <param name="dev">device to init sand tile texture on.</param>
         public SandGridComponent(GraphicsDevice dev)
         {
             this.tex = new Texture2D(dev, 1, 1);
@@ -24,7 +29,10 @@ namespace HW5_GROUP_PROJECT.sand
             this.Init();
         }
 
-        public void Init()
+        /// <summary>
+        /// initializes the falling sand LUT
+        /// </summary>
+        private void Init()
         {
             this.fallingSandTable = new(3);
             this.fallingSandTable.Build((tl, tr, bl, br) =>
@@ -55,8 +63,8 @@ namespace HW5_GROUP_PROJECT.sand
                 return group;
             });
 
-            uint xRange = 800;
-            uint yRange = 500;
+            uint xRange = 1000;
+            uint yRange = 600;
 
             Random r = new(0);
             for(uint x = 0; x < xRange; x++)
@@ -68,7 +76,12 @@ namespace HW5_GROUP_PROJECT.sand
             }
         }
 
-        byte FallingSandInterpret(in SandPixel pixel)
+        /// <summary>
+        /// map sand pixels to byte values used by the LUT
+        /// </summary>
+        /// <param name="pixel">pixel to convert</param>
+        /// <returns>byte value to use</returns>
+        private byte FallingSandInterpret(in SandPixel pixel)
         {
             return  pixel.id == PixelId.INVALID?    (byte)2: 
                     pixel.id == PixelId.SAND?       (byte)1: 
@@ -81,10 +94,17 @@ namespace HW5_GROUP_PROJECT.sand
             this.grid.Draw((x,y,pixel) =>
             {
                 if (pixel.id == PixelId.SAND)
-                batch.Draw(this.tex, new Rectangle(new((int)x,(int)y), new(1,1)), Color.SandyBrown);
+                {
+                    int x1 = (int)x * this.xScale - this.xOffset;
+                    int y1 = (int)y * this.yScale - this.yOffset;
+                    batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), Color.SandyBrown);
+                }
             });
         }
 
+        /// <summary>
+        /// updates the state of the current board
+        /// </summary>
         public void Update()
         {
             grid.Update(this.fallingSandTable, this.FallingSandInterpret, this.updateCount);
@@ -92,6 +112,12 @@ namespace HW5_GROUP_PROJECT.sand
             this.updateCount %= 4;
         }
 
+        /// <summary>
+        /// method to check if a tile in the grid is a solid tile.
+        /// </summary>
+        /// <param name="x">x coordinate to check</param>
+        /// <param name="y">y coordinate to check</param>
+        /// <returns>if the tile is solid</returns>
         public bool IsSolid(uint x, uint y)
         {
             return this.grid.GetPixel(new(x,y)).id == PixelId.SAND;

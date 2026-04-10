@@ -122,5 +122,16 @@ namespace HW5_GROUP_PROJECT.sand
         {
             return this.grid.GetPixel(new(x,y)).id == PixelId.SAND;
         }
+
+        /// <summary>
+        /// sets a pixel in the targeted positions
+        /// </summary>
+        /// <param name="x">x to set</param>
+        /// <param name="y">y to set</param>
+        /// <param name="id">id to set tile to.</param>
+        public void SetPixel(uint x, uint y, PixelId id)
+        {
+            this.grid.SetPixel(new(x,y), id);
+        }
     }
 }

@@ -34,6 +34,21 @@ namespace HW5_GROUP_PROJECT
 
         protected override void LoadContent()
         {
+
+            /// here it is, glorious monogame texture loading.
+            //this is it. this is the code that loads a texture, in this case, rick astley
+            Texture2D spriteSheet = Content.Load<Texture2D>("rick_astley");
+
+            //then initializes an array of colors the exact size of said texture
+            Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
+
+            //then copys the color data from the texture to the color array
+            spriteSheet.GetData(colors);
+
+            //then prints out the color at the top left corner of the image.
+            Console.WriteLine($"{colors[0]}");
+
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 

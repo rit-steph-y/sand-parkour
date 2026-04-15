@@ -23,6 +23,7 @@ namespace HW5_GROUP_PROJECT.sand
         }
 
         private readonly Dictionary<ZOrderIndex, SandChunk> chunks;
+        private ZOrderIndex min = 0;
         private ZOrderIndex max = new(1023,1023);
         private SandChunk lastOptChunk;
         private ZOrderIndex lastHash = 0;
@@ -55,7 +56,7 @@ namespace HW5_GROUP_PROJECT.sand
         }
         public void Update(in LookupTable lut, LookupTable.InterpretPixel interpret, byte offsetStep)
         {
-            ZOrderIndex current = this.GetStart(offsetStep);
+            ZOrderIndex current = this.min + this.GetStart(offsetStep);
             while (current <= this.max)
             {
                 SrcSandGroup sourceGroup;

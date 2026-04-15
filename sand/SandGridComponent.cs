@@ -72,6 +72,7 @@ namespace HW5_GROUP_PROJECT.sand
                 for(uint y = 0; y < yRange; y++)
                 {
                     grid.SetPixel(new(x + 1,y + 1), r.Next(2) == 0? PixelId.AIR: PixelId.SAND);
+                    grid.GetPixel(new(x + 1,y + 1)).SetColor((ushort)r.Next());
                 }
             }
         }
@@ -97,7 +98,7 @@ namespace HW5_GROUP_PROJECT.sand
                 {
                     int x1 = (int)x * this.xScale - this.xOffset;
                     int y1 = (int)y * this.yScale - this.yOffset;
-                    batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), Color.SandyBrown);
+                    batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), pixel.GetColor());
                 }
             });
         }

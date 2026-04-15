@@ -37,7 +37,7 @@ namespace HW5_GROUP_PROJECT
 
             /// here it is, glorious monogame texture loading.
             //this is it. this is the code that loads a texture, in this case, rick astley
-            Texture2D spriteSheet = Content.Load<Texture2D>("rick_astley");
+            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel2");
 
             //then initializes an array of colors the exact size of said texture
             Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
@@ -48,6 +48,37 @@ namespace HW5_GROUP_PROJECT
             //then prints out the color at the top left corner of the image.
             Console.WriteLine($"{colors[0]}");
 
+            // Aj's code 
+            uint columns = 0;
+            uint rows = 0;
+            foreach (Color i in colors)
+            {
+                if (i == Color.Red)
+                {
+                    sand.SetPixel(columns, rows, PixelId.SAND);
+                    columns++;
+                }
+                else if (i == Color.White)
+                {
+                    sand.SetPixel(columns, rows, PixelId.AIR);
+                    columns++;
+                }
+                else
+                {
+                    sand.SetPixel(columns, rows, PixelId.INVALID);
+                    columns++;
+                }
+
+                if (columns >= spriteSheet.Width)
+                {
+                    rows++;
+                    columns = 0;
+                }
+            }
+
+            //
+
+            //this might be ridculus 
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }

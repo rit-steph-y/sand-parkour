@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -42,7 +43,7 @@ namespace HW5_GROUP_PROJECT.sand
             this.lastOptChunk = this.chunks[z];
             this.lastHash = z;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private readonly ZOrderIndex GetStart(byte offsetStep)
         {
@@ -54,9 +55,11 @@ namespace HW5_GROUP_PROJECT.sand
                 _ => 0b10
             };
         }
-        public void Update(in LookupTable lut, LookupTable.InterpretPixel interpret, byte offsetStep)
+
+        public void Update(in Span<LookupTable> lut, Span<byte[]> interpret, byte offsetStep)
         {
             ZOrderIndex current = this.min + this.GetStart(offsetStep);
+            int length = lut.Length;
             while (current <= this.max)
             {
                 SrcSandGroup sourceGroup;
@@ -69,14 +72,15 @@ namespace HW5_GROUP_PROJECT.sand
                 sourceGroup.TopRight = ref this.GetPixel(top | right);
                 sourceGroup.BottomLeft = ref this.GetPixel(bottom | left);
                 sourceGroup.BottomRight = ref this.GetPixel(bottom | right);
-                lut.Update(ref sourceGroup, interpret);
+                for (int i = 0; i < length; i++)
+                    lut[i].Update(ref sourceGroup, interpret[i]);
                 current += 4;
             }
         }
 
         public void Draw(DrawHandle handle)
         {
-            
+
             ZOrderIndex current = 0;
             while (current <= this.max)
             {
@@ -96,10 +100,10 @@ namespace HW5_GROUP_PROJECT.sand
         /**
         note: the previous implementation seemed to have severely messed
         up the performance, idk why this here just breaks,
-        
-        I suspect it has something to do with the fact that C# doesn't 
-        have very good codegen, and/or that the code here causes a much 
-        longer hold up on branching since the two return values are not 
+
+        I suspect it has something to do with the fact that C# doesn't
+        have very good codegen, and/or that the code here causes a much
+        longer hold up on branching since the two return values are not
         seen as the same, possibly the newer implementation actually jumps
         in control flow less even in release.
 

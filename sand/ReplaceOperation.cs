@@ -8,6 +8,7 @@ namespace HW5_GROUP_PROJECT.sand
     {
         Move = 0,
         Spawn = 1,
+        ReplaceId = 2,
     }
 
     /// <summary>
@@ -24,6 +25,7 @@ namespace HW5_GROUP_PROJECT.sand
     /// byte:   1    2    3    4    5
     ///       [    Sand pixel    ] [Spawn]
     ///       [src][chg][        ] [Move]
+    ///       [src][id ][        ] [ReplaceId]
     ///      ///keep operation is the same as move but with original coordinates.
     /// 
     /// effectively a union type with a byte at the end that determines how
@@ -42,11 +44,18 @@ namespace HW5_GROUP_PROJECT.sand
         //use if struct is a move operation
         [FieldOffset(0)] byte Source;
         [FieldOffset(1)] bool changed;
+        [FieldOffset(1)] PixelId newPixelId;
 
         public ReplaceOperation(byte Source)
         {
             this.Source = Source;
             this.type = ReplaceOperationType.Move;
+        }
+        public ReplaceOperation(byte Source, PixelId id)
+        {
+            this.Source = Source;
+            this.newPixelId = id;
+            this.type = ReplaceOperationType.ReplaceId;
         }
 
         public ReplaceOperation(SandPixel pixel)
@@ -67,23 +76,36 @@ namespace HW5_GROUP_PROJECT.sand
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly SandPixel Apply(ref SrcSandGroup src, out bool changed)
         {
-            if (this.type == ReplaceOperationType.Move){
-                changed = this.changed;
-                return Source switch
-                {
-                    0 => src.TopLeft,
-                    1 => src.TopRight,
-                    2 => src.BottomLeft,
-                    _ => src.BottomRight,
-                };
+            if (this.type == ReplaceOperationType.Spawn){
+                changed = true;
+                return this.pixel;
             }
-            changed = true;
-            return this.pixel;
+
+            SandPixel pixel = Source switch
+            {
+                0 => src.TopLeft,
+                1 => src.TopRight,
+                2 => src.BottomLeft,
+                _ => src.BottomRight,
+            };
+
+            if (this.type == ReplaceOperationType.ReplaceId)
+            {
+                changed = true;
+                pixel.id = this.newPixelId;
+            }
+            else
+            {
+                changed = this.changed;
+            }
+
+            return pixel;
         }
 
         public void UpdateIsChanged(ReplaceOperation other)
         {
-            this.changed = !this.SrcEquals(other);
+            if(this.type == ReplaceOperationType.Move)
+                this.changed = !this.SrcEquals(other);
         }
 
         private readonly bool SrcEquals(ReplaceOperation other)

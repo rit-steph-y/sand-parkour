@@ -6,7 +6,8 @@ namespace HW5_GROUP_PROJECT.sand
     {
         INVALID = 0,
         AIR = 1,
-        SAND = 2
+        FALLING_SAND = 2,
+        SAND = 3
     }
 
     public struct SandPixel

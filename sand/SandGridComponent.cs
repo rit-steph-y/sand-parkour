@@ -8,8 +8,9 @@ namespace HW5_GROUP_PROJECT.sand
     public class SandGridComponent
     {
         private SandGrid grid;
-        private Texture2D tex;
+        private Texture2D? tex;
         private LookupTable fallingSandTable;
+        private LookupTable looseSandTable;
         private byte updateCount = 0;
 
         public int xScale = 1;
@@ -21,10 +22,12 @@ namespace HW5_GROUP_PROJECT.sand
         /// the sand grid component
         /// </summary>
         /// <param name="dev">device to init sand tile texture on.</param>
-        public SandGridComponent(GraphicsDevice dev)
+        public SandGridComponent(GraphicsDevice? dev)
         {
-            this.tex = new Texture2D(dev, 1, 1);
-            this.tex.SetData(new[] {Color.White});
+            if (dev != null){
+                this.tex = new Texture2D(dev, 1, 1);
+                this.tex.SetData(new[] {Color.White});
+            }
             this.grid = new();
             this.Init();
         }
@@ -62,6 +65,42 @@ namespace HW5_GROUP_PROJECT.sand
                 }
                 return group;
             });
+            this.looseSandTable = new(3);
+            this.looseSandTable.Build((tl, tr, bl, br) =>
+            {
+                ReplaceSandGroup group = new();
+                //if top left is loose sand
+                if (tl == 1)
+                {
+                    if(tr == 0)
+                    {
+                        group.TopLeft = new(0,PixelId.FALLING_SAND);
+                    }
+                }
+                if (tr == 1)
+                {
+                    if(tl == 0)
+                    {
+                        group.TopRight = new(1,PixelId.FALLING_SAND);
+                    }
+                }
+
+                if (bl == 1)
+                {
+                    if(tl == 0 || br == 0)
+                    {
+                        group.BottomLeft = new(2, PixelId.FALLING_SAND);
+                    }
+                }
+                if (br == 1)
+                {
+                    if(tr == 0 || bl == 0)
+                    {
+                        group.BottomRight = new(3,PixelId.FALLING_SAND);
+                    }
+                }
+                return group;
+            });
 
             uint xRange = 1000;
             uint yRange = 600;
@@ -71,9 +110,22 @@ namespace HW5_GROUP_PROJECT.sand
             {
                 for(uint y = 0; y < yRange; y++)
                 {
-                    grid.SetPixel(new(x + 1,y + 1), r.Next(2) == 0? PixelId.AIR: PixelId.SAND);
-                    grid.GetPixel(new(x + 1,y + 1)).SetColor((ushort)r.Next());
+                    bool v = r.Next(2) == 0;
+                    grid.SetPixel(new(x + 1,y + 1), v? PixelId.AIR: PixelId.SAND);
+                    if(!v){
+                        grid.GetPixel(new(x + 1,y + 1)).SetColor((ushort)r.Next());
+                    }
+                    else
+                    {
+                        grid.GetPixel(new(x + 1,y + 1)).SetColor(0);
+                    }
                 }
+            }
+            for(uint x = 0; x < xRange; x++)
+            {
+                uint y = 1;
+                if(r.NextDouble() < .004)
+                    grid.SetPixel(new(x + 1,y + 1), PixelId.FALLING_SAND);
             }
         }
 
@@ -82,19 +134,32 @@ namespace HW5_GROUP_PROJECT.sand
         /// </summary>
         /// <param name="pixel">pixel to convert</param>
         /// <returns>byte value to use</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte FallingSandInterpret(in SandPixel pixel)
         {
-            return  pixel.id == PixelId.INVALID?    (byte)2: 
-                    pixel.id == PixelId.SAND?       (byte)1: 
-                                                    (byte)0;
+            return  pixel.id == PixelId.AIR?                (byte)0: 
+                    pixel.id == PixelId.FALLING_SAND?       (byte)1: 
+                                                            (byte)2;
+        }
+        /// <summary>
+        /// map sand pixels to byte values used by the LUT
+        /// </summary>
+        /// <param name="pixel">pixel to convert</param>
+        /// <returns>byte value to use</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private byte LooseSandInterpret(in SandPixel pixel)
+        {
+            return  pixel.id == PixelId.FALLING_SAND?       (byte)0: 
+                    pixel.id == PixelId.SAND?               (byte)1: 
+                                                            (byte)2;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // [MethodImpl(MethodImplOptions)]
         public void Draw(SpriteBatch batch)
         {
             this.grid.Draw((x,y,pixel) =>
             {
-                if (pixel.id == PixelId.SAND)
+                if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
                 {
                     int x1 = (int)x * this.xScale - this.xOffset;
                     int y1 = (int)y * this.yScale - this.yOffset;
@@ -108,7 +173,11 @@ namespace HW5_GROUP_PROJECT.sand
         /// </summary>
         public void Update()
         {
-            grid.Update(this.fallingSandTable, this.FallingSandInterpret, this.updateCount);
+            grid.Update(
+                [this.looseSandTable, this.fallingSandTable],
+                [[2,2,0,1], [2,0,1,2]],
+                this.updateCount
+            );
             this.updateCount ++;
             this.updateCount %= 4;
         }
@@ -121,7 +190,7 @@ namespace HW5_GROUP_PROJECT.sand
         /// <returns>if the tile is solid</returns>
         public bool IsSolid(uint x, uint y)
         {
-            return this.grid.GetPixel(new(x,y)).id == PixelId.SAND;
+            return this.grid.GetPixel(new(x,y)).id == PixelId.FALLING_SAND;
         }
 
         /// <summary>

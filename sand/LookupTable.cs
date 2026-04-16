@@ -1,3 +1,5 @@
+using System;
+
 namespace HW5_GROUP_PROJECT.sand
 {
     public struct LookupTable
@@ -36,13 +38,13 @@ namespace HW5_GROUP_PROJECT.sand
             }
         }
 
-        public void Update(ref SrcSandGroup src, InterpretPixel interpret)
+        public readonly void Update(ref SrcSandGroup src, byte[] interpretTable)
         {
             uint i = this.Lookup(
-                interpret.Invoke(src.TopLeft),
-                interpret.Invoke(src.TopRight),
-                interpret.Invoke(src.BottomLeft),
-                interpret.Invoke(src.BottomRight)
+                interpretTable[(uint)src.TopLeft.id],
+                interpretTable[(uint)src.TopRight.id],
+                interpretTable[(uint)src.BottomLeft.id],
+                interpretTable[(uint)src.BottomRight.id]
             );
             this.lookup[i].Apply(ref src);
         }

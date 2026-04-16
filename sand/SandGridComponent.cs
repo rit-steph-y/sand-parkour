@@ -106,26 +106,12 @@ namespace HW5_GROUP_PROJECT.sand
             uint yRange = 600;
 
             Random r = new(0);
-            for(uint x = 0; x < xRange; x++)
+            for (uint x = 0; x < xRange; x++)
             {
-                for(uint y = 0; y < yRange; y++)
+                for (uint y = 0; y < yRange; y++)
                 {
-                    bool v = r.Next(2) == 0;
-                    grid.SetPixel(new(x + 1,y + 1), v? PixelId.AIR: PixelId.SAND);
-                    if(!v){
-                        grid.GetPixel(new(x + 1,y + 1)).SetColor((ushort)r.Next());
-                    }
-                    else
-                    {
-                        grid.GetPixel(new(x + 1,y + 1)).SetColor(0);
-                    }
+                    grid.SetPixel(new(x + 1, y + 1), r.Next(2) == 0 ? PixelId.AIR : PixelId.SAND);
                 }
-            }
-            for(uint x = 0; x < xRange; x++)
-            {
-                uint y = 1;
-                if(r.NextDouble() < .004)
-                    grid.SetPixel(new(x + 1,y + 1), PixelId.FALLING_SAND);
             }
         }
 

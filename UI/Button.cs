@@ -55,7 +55,7 @@ namespace HW5_GROUP_PROJECT.UI
         }
 
 
-        internal void Draw(SpriteBatch spriteBatch)
+        internal override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(tex, rect, color);
             textBox.Draw(spriteBatch);

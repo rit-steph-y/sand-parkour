@@ -11,7 +11,8 @@ namespace HW5_GROUP_PROJECT
     internal enum GameState
     {
         MainMenu,
-        SandSimulation
+        SandSimulation,
+        Pause
     }
 
     public class SandGame : Game
@@ -27,6 +28,7 @@ namespace HW5_GROUP_PROJECT
         private SpriteFont font;
 
         private Menu mainMenu;
+        private Menu pauseMenu;
 
         private MouseState mouseState;
         private MouseState prevMouseState;
@@ -67,6 +69,14 @@ namespace HW5_GROUP_PROJECT
             mainMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
             mainMenu.buttons[0].OnButtonClicked += StartSimulation;
 
+            // Set up the pause menu
+            pauseMenu = new Menu(blankTexture, Color.Transparent);
+
+            pauseMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
+            pauseMenu.buttons[0].OnButtonClicked += Exit;
+            pauseMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
+            pauseMenu.buttons[1].OnButtonClicked += StartSimulation;
+
             /// here it is, glorious monogame texture loading.
             //this is it. this is the code that loads a texture, in this case, rick astley
             Texture2D spriteSheet = Content.Load<Texture2D>("rick_astley");
@@ -88,8 +98,9 @@ namespace HW5_GROUP_PROJECT
         // Well I think I had to add the switch statment here unless I'm dumb - Jimmy
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //  Exit();
+
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
 
@@ -100,12 +111,26 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.SandSimulation:
+                    if (keyState.IsKeyDown(Keys.Escape) && !prevKeyState.IsKeyDown(Keys.Escape))
+                    {
+                        currentState = GameState.Pause;
+                    }
+
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
                     this.sand.Update();
                     stopwatch.Stop();
                     this.SandRollingAvgMs *= .7f;
                     this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+                    break;
+
+                case GameState.Pause:
+                    pauseMenu.Update(mouseState, prevMouseState);
+                    if (keyState.IsKeyDown(Keys.Escape) && !prevKeyState.IsKeyDown(Keys.Escape))
+                    {
+                        StartSimulation();
+                    }
+
                     break;
             }
 
@@ -130,6 +155,11 @@ namespace HW5_GROUP_PROJECT
                 case GameState.SandSimulation:
                     this.sand.Draw(this._spriteBatch);
                     break;
+
+                case GameState.Pause:
+                    this.sand.Draw(this._spriteBatch);
+                    pauseMenu.Draw(this._spriteBatch);
+                    break;
             }
             _spriteBatch.End();
 
@@ -139,6 +169,11 @@ namespace HW5_GROUP_PROJECT
         protected void StartSimulation()
         {
             currentState = GameState.SandSimulation;
+        }
+
+        protected void PauseGame()
+        {
+            currentState = GameState.Pause;
         }
     }
 }

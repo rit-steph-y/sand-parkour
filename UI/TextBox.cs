@@ -42,11 +42,5 @@ namespace HW5_GROUP_PROJECT.UI
         {
             spriteBatch.DrawString(font, text, position, color);
         }
-
-
-        internal void Move(int x, int y)
-        {
-
-        }
     }
 }

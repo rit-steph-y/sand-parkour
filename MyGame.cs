@@ -27,6 +27,10 @@ namespace HW5_GROUP_PROJECT
         private Texture2D blankTexture;
         private SpriteFont font;
 
+        private Player player;
+        private Texture2D playerSprite;
+        private Vector2 playerPos;
+
         private Menu mainMenu;
         private Menu pauseMenu;
 
@@ -98,19 +102,21 @@ namespace HW5_GROUP_PROJECT
                 if (i == Color.Red)
                 {
                     // Color.Red is exactly #ff0000 or 255 0 0
-                    // if it is off by even one this will not work
+                    // if the color value of the picture loaded is off by even one this will not work
                     sand.SetPixel(columns, rows, PixelId.SAND, Color.SandyBrown);
                     columns++;
                 }
                 else if (i == Color.White)
                 {
-                    // Color.Red is exactly #ff0000 or 255 0 0
+                    // Color.White is exactly #ffffff or 255 255 255
                     sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
                     columns++;
                 }
                 else if (i == Color.Blue)
                 {
-                    //
+                    // Color.Blue is exactly #0000ff or 0 0 255
+                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, Color.DarkKhaki);
+                    columns++;
                 }
                 else
                 {
@@ -126,7 +132,9 @@ namespace HW5_GROUP_PROJECT
             }
 
             //
-
+            playerSprite = Content.Load<Texture2D>("sandPlayerSprite");
+            playerPos = new Vector2(120,120);
+            this.player = new Player(playerPos, playerSprite);
             //this might be ridculus 
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -160,6 +168,8 @@ namespace HW5_GROUP_PROJECT
                     stopwatch.Stop();
                     this.SandRollingAvgMs *= .7f;
                     this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+
+                    player.Update(keyState);
                     break;
 
                 case GameState.Pause:
@@ -192,6 +202,7 @@ namespace HW5_GROUP_PROJECT
 
                 case GameState.SandSimulation:
                     this.sand.Draw(this._spriteBatch);
+                    this.player.Draw(this._spriteBatch);
                     break;
 
                 case GameState.Pause:

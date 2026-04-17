@@ -79,7 +79,7 @@ namespace HW5_GROUP_PROJECT
 
             /// here it is, glorious monogame texture loading.
             //this is it. this is the code that loads a texture, in this case, rick astley
-            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel2");
+            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel");
 
             //then initializes an array of colors the exact size of said texture
             Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
@@ -99,13 +99,13 @@ namespace HW5_GROUP_PROJECT
                 {
                     // Color.Red is exactly #ff0000 or 255 0 0
                     // if it is off by even one this will not work
-                    sand.SetPixel(columns, rows, PixelId.SAND);
+                    sand.SetPixel(columns, rows, PixelId.SAND, Color.SandyBrown);
                     columns++;
                 }
                 else if (i == Color.White)
                 {
                     // Color.Red is exactly #ff0000 or 255 0 0
-                    sand.SetPixel(columns, rows, PixelId.AIR);
+                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
                     columns++;
                 }
                 else if (i == Color.Blue)
@@ -114,7 +114,7 @@ namespace HW5_GROUP_PROJECT
                 }
                 else
                 {
-                    sand.SetPixel(columns, rows, PixelId.AIR);
+                    sand.SetPixel(columns, rows, PixelId.INVALID, Color.Black);
                     columns++;
                 }
 

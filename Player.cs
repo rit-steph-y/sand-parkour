@@ -63,5 +63,33 @@ namespace HW5_GROUP_PROJECT
             myPosition = new Vector2(x, y);
         }
 
+
+        // Player with movement, collisions not implemented yet.
+        // the following methods are for convience
+        // and because getting the corners of a sprite always annoys me.
+        // and we might need them. - AJ
+
+        internal Vector2 GetTopLeftCorner()
+        {
+            Vector2 temp = new Vector2(this.myX, this.myY);
+            return temp;
+        }
+        internal Vector2 GetTopRightCorner()
+        {
+            Vector2 temp = new Vector2(this.myX + this.myWidth, this.myY);
+            return temp;
+        }
+
+        internal Vector2 GetBottomLeftCorner()
+        {
+            Vector2 temp = new Vector2(this.myX, this.myY + this.myHeight);
+            return temp;
+        }
+
+        internal Vector2 GetBottomRightCorner()
+        {
+            Vector2 temp = new Vector2(this.myX + this.myWidth, this.myY + this.myHeight);
+            return temp;
+        }
     }
 }

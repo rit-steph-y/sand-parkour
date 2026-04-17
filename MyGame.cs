@@ -12,7 +12,8 @@ namespace HW5_GROUP_PROJECT
     {
         MainMenu,
         SandSimulation,
-        Pause
+        Pause,
+        LevelSelect
     }
 
     public class SandGame : Game
@@ -30,8 +31,7 @@ namespace HW5_GROUP_PROJECT
         private Texture2D blankTexture;
         private SpriteFont font;
 
-        private Menu mainMenu;
-        private Menu pauseMenu;
+        private Menu currentMenu;
 
         private MouseState mouseState;
         private MouseState prevMouseState;
@@ -72,22 +72,7 @@ namespace HW5_GROUP_PROJECT
             blankTexture = Content.Load<Texture2D>("blank_tex");
             font = Content.Load<SpriteFont>("NotoSansCJK-JP");
 
-            // Set up the main menu
-            // I added a placeholder image
-            mainMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
-
-            mainMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
-            mainMenu.buttons[0].OnButtonClicked += StartLevel;
-
-            // Set up the pause menu
-            pauseMenu = new Menu(blankTexture, Color.Transparent);
-
-            pauseMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
-            pauseMenu.buttons[0].OnButtonClicked += Exit;
-            pauseMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
-            pauseMenu.buttons[1].OnButtonClicked += GoToMainMenu;
-            pauseMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
-            pauseMenu.buttons[2].OnButtonClicked += StartSimulation;
+            GoToMainMenu();
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
@@ -105,13 +90,13 @@ namespace HW5_GROUP_PROJECT
             switch (currentState)
             {
                 case GameState.MainMenu:
-                    mainMenu.Update(mouseState, prevMouseState);
+                    currentMenu.Update(mouseState, prevMouseState);
                     break;
 
                 case GameState.SandSimulation:
                     if (keyState.IsKeyDown(Keys.Escape) && !prevKeyState.IsKeyDown(Keys.Escape))
                     {
-                        currentState = GameState.Pause;
+                        PauseGame();
                     }
 
                     Stopwatch stopwatch = new Stopwatch();
@@ -123,7 +108,7 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.Pause:
-                    pauseMenu.Update(mouseState, prevMouseState);
+                    currentMenu.Update(mouseState, prevMouseState);
                     if (keyState.IsKeyDown(Keys.Escape) && !prevKeyState.IsKeyDown(Keys.Escape))
                     {
                         StartSimulation();
@@ -147,7 +132,7 @@ namespace HW5_GROUP_PROJECT
             switch (currentState)
             {
                 case GameState.MainMenu:
-                    mainMenu.Draw(_spriteBatch);
+                    currentMenu.Draw(_spriteBatch);
                     break;
 
                 case GameState.SandSimulation:
@@ -156,7 +141,7 @@ namespace HW5_GROUP_PROJECT
 
                 case GameState.Pause:
                     this.sand.Draw(this._spriteBatch);
-                    pauseMenu.Draw(this._spriteBatch);
+                    currentMenu.Draw(this._spriteBatch);
                     break;
             }
             _spriteBatch.End();
@@ -178,12 +163,51 @@ namespace HW5_GROUP_PROJECT
 
         protected void GoToMainMenu()
         {
+            // Set up the main menu
+            // I added a placeholder image
+            currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
+
+            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[0].OnButtonClicked += Exit;
+            //currentMenu.AddButton(new Button(blankTexture, font, "Level Select", 175, 75, Color.Wheat, Color.Sienna));
+            //currentMenu.buttons[1].OnButtonClicked += GoToLevelSelect;
+            currentMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[1].OnButtonClicked += StartLevel;
+
             currentState = GameState.MainMenu;
         }
 
         protected void PauseGame()
         {
+            // Set up the pause menu
+            currentMenu = new Menu(blankTexture, Color.Transparent);
+
+            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[0].OnButtonClicked += Exit;
+            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[1].OnButtonClicked += GoToMainMenu;
+            currentMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[2].OnButtonClicked += StartSimulation;
+
             currentState = GameState.Pause;
         }
+
+        //private void GoToLevelSelect()
+        //{
+        //    // Set up the Level select
+        //    currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
+
+        //    currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
+        //    currentMenu.buttons[0].OnButtonClicked += GoToMainMenu;
+
+        //    int i = 1;
+        //    foreach (Texture2D level in levels)
+        //    {
+        //        currentMenu.AddButton(new Button(blankTexture, font, level.Name, 175, 75, Color.Wheat, Color.Sienna));
+        //        currentMenu.buttons[i].OnButtonClicked += StartLevel;
+        //    }
+
+        //    currentState = GameState.LevelSelect;
+        //}
     }
 }

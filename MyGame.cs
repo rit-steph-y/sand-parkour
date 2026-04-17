@@ -74,12 +74,14 @@ namespace HW5_GROUP_PROJECT
 
             pauseMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
             pauseMenu.buttons[0].OnButtonClicked += Exit;
+            pauseMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
+            pauseMenu.buttons[1].OnButtonClicked += GoToMainMenu;
             pauseMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
-            pauseMenu.buttons[1].OnButtonClicked += StartSimulation;
+            pauseMenu.buttons[2].OnButtonClicked += StartSimulation;
 
             /// here it is, glorious monogame texture loading.
             //this is it. this is the code that loads a texture, in this case, rick astley
-            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel2");
+            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel");
 
             //then initializes an array of colors the exact size of said texture
             Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
@@ -200,6 +202,11 @@ namespace HW5_GROUP_PROJECT
         protected void StartSimulation()
         {
             currentState = GameState.SandSimulation;
+        }
+
+        protected void GoToMainMenu()
+        {
+            currentState = GameState.MainMenu;
         }
 
         protected void PauseGame()

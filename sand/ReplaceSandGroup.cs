@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace HW5_GROUP_PROJECT.sand
 {
     /// <summary>
@@ -51,6 +53,7 @@ namespace HW5_GROUP_PROJECT.sand
         /// DO NOT INLINE THIS, SEEMS TO SLOW DOWN PROGRAM?
         /// </summary>
         /// <param name="src">source sand group</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ChangeResult Apply(ref SrcSandGroup src)
         {
             ChangeResult res = new();

@@ -60,7 +60,7 @@ namespace HW5_GROUP_PROJECT
         protected override void LoadContent()
         {
             blankTexture = Content.Load<Texture2D>("blank_tex");
-            font = Content.Load<SpriteFont>("NoToSansCJK-JP");
+            font = Content.Load<SpriteFont>("NotoSansCJK-JP");
 
             // Set up the main menu
             // I added a placeholder image

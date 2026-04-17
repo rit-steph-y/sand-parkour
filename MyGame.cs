@@ -22,6 +22,9 @@ namespace HW5_GROUP_PROJECT
         private SpriteBatch _spriteBatch;
 
         private GameState currentState;
+        private Scene currentScene;
+        private Texture2D[] levels;
+        private int levelIndex = 0;
 
         // using this for the buttons
         private Texture2D blankTexture;
@@ -59,6 +62,13 @@ namespace HW5_GROUP_PROJECT
 
         protected override void LoadContent()
         {
+            // Add new levels to this array
+            levels = 
+                [
+                    Content.Load<Texture2D>("testLevel"),
+                    Content.Load<Texture2D>("testLevel2")
+                ];
+
             blankTexture = Content.Load<Texture2D>("blank_tex");
             font = Content.Load<SpriteFont>("NotoSansCJK-JP");
 
@@ -67,7 +77,7 @@ namespace HW5_GROUP_PROJECT
             mainMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
 
             mainMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
-            mainMenu.buttons[0].OnButtonClicked += StartSimulation;
+            mainMenu.buttons[0].OnButtonClicked += StartLevel;
 
             // Set up the pause menu
             pauseMenu = new Menu(blankTexture, Color.Transparent);
@@ -78,51 +88,6 @@ namespace HW5_GROUP_PROJECT
             pauseMenu.buttons[1].OnButtonClicked += GoToMainMenu;
             pauseMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
             pauseMenu.buttons[2].OnButtonClicked += StartSimulation;
-
-            /// here it is, glorious monogame texture loading.
-            //this is it. this is the code that loads a texture, in this case, rick astley
-            Texture2D spriteSheet = Content.Load<Texture2D>("testLevel");
-
-            //then initializes an array of colors the exact size of said texture
-            Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
-
-            //then copys the color data from the texture to the color array
-            spriteSheet.GetData(colors);
-
-            //then prints out the color at the top left corner of the image.
-            Console.WriteLine($"{colors[0]}");
-
-            // Aj's code 
-            uint columns = 0;
-            uint rows = 0;
-            foreach (Color i in colors)
-            {
-                if (i == Color.Red)
-                {
-                    sand.SetPixel(columns, rows, PixelId.SAND);
-                    columns++;
-                }
-                else if (i == Color.White)
-                {
-                    sand.SetPixel(columns, rows, PixelId.AIR);
-                    columns++;
-                }
-                else
-                {
-                    sand.SetPixel(columns, rows, PixelId.INVALID);
-                    columns++;
-                }
-
-                if (columns >= spriteSheet.Width)
-                {
-                    rows++;
-                    columns = 0;
-                }
-            }
-
-            //
-
-            //this might be ridculus 
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
@@ -197,6 +162,13 @@ namespace HW5_GROUP_PROJECT
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        internal void StartLevel()
+        {
+            currentScene = new Scene(levels[levelIndex]);
+            currentScene.LoadLevel(sand);
+            currentState = GameState.SandSimulation;
         }
 
         protected void StartSimulation()

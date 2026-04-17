@@ -65,7 +65,7 @@ namespace HW5_GROUP_PROJECT
                 }
                 else
                 {
-                    sand.SetPixel(columns, rows, PixelId.INVALID);
+                    sand.SetPixel(columns, rows, PixelId.AIR);
                     columns++;
                 }
 

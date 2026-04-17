@@ -55,13 +55,20 @@ namespace HW5_GROUP_PROJECT
             {
                 if (i == Color.Red)
                 {
+                    // Color.Red is exactly #ff0000 or 255 0 0
+                    // if it is off by even one this will not work
                     sand.SetPixel(columns, rows, PixelId.SAND);
                     columns++;
                 }
                 else if (i == Color.White)
                 {
+                    // Color.Red is exactly #ff0000 or 255 0 0
                     sand.SetPixel(columns, rows, PixelId.AIR);
                     columns++;
+                }
+                else if (i == Color.Blue)
+                {
+                    //
                 }
                 else
                 {

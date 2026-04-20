@@ -196,14 +196,12 @@ namespace HW5_GROUP_PROJECT
 
         protected void GoToMainMenu()
         {
+            levelIndex = 0;
+
             currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
 
             currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[0].OnButtonClicked += Exit;
-            /*
-            currentMenu.AddButton(new Button(blankTexture, font, "Level Select", 175, 75, Color.Wheat, Color.Sienna));
-            currentMenu.buttons[1].OnButtonClicked += GoToLevelSelect; 
-            */
             currentMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[1].OnButtonClicked += StartLevel;
 
@@ -226,27 +224,5 @@ namespace HW5_GROUP_PROJECT
 
             currentState = GameState.Pause;
         }
-
-        /*
-        private void GoToLevelSelect()
-        {
-            // Set up the Level select
-            currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
-
-            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
-            currentMenu.buttons[0].OnButtonClicked += GoToMainMenu;
-
-            int i = 1;
-            foreach (Texture2D level in levels)
-            {
-                currentMenu.AddButton(new Button(blankTexture, font, level.Name, 175, 75, Color.Wheat, Color.Sienna));
-                currentMenu.buttons[i].OnButtonClicked += StartLevel;
-
-                i++;
-            }
-
-            currentState = GameState.LevelSelect;
-        }
-        */
     }
 }

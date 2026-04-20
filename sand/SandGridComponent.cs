@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,10 +11,10 @@ namespace HW5_GROUP_PROJECT.sand
         private LookupTable looseSandTable;
         private byte updateCount = 0;
 
-        public int xScale = 1;
-        public int yScale = 1;
-        public int xOffset = 100;
-        public int yOffset = 100;
+        public int xScale = 2;
+        public int yScale = 2;
+        public float xOffset = 200;
+        public float yOffset = 200;
 
         /// <summary>
         /// the sand grid component
@@ -26,7 +24,7 @@ namespace HW5_GROUP_PROJECT.sand
         {
             if (dev != null){
                 this.tex = new Texture2D(dev, 1, 1);
-                this.tex.SetData(new[] {Color.White});
+                this.tex.SetData([Color.White]);
             }
             this.grid = new();
             this.Init();
@@ -103,17 +101,32 @@ namespace HW5_GROUP_PROJECT.sand
             });
         }
 
-        public void Draw(SpriteBatch batch)
+        public void Draw(SpriteBatch batch, Vector2 windowSize)
         {
+            Vector2 pixelSize = new(this.xScale,this.yScale);
+            Vector2 topLeft = new(this.xOffset, this.yOffset);
+            Vector2 bottomRight = topLeft;
+            topLeft -= windowSize / 2 / pixelSize;
+            bottomRight += windowSize / 2 / pixelSize;
+            Vector2 drawBottomRight = new(
+                bottomRight.X + 1, 
+                bottomRight.Y + 1);
+            Vector2 drawTopLeft = new(
+                topLeft.X, 
+                topLeft.Y);
+
             this.grid.Draw((x,y,pixel) =>
             {
                 if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
                 {
-                    int x1 = (int)x * this.xScale - this.xOffset;
-                    int y1 = (int)y * this.yScale - this.yOffset;
+                    int x1 = (int)((x - topLeft.X) * pixelSize.X);
+                    int y1 = (int)((y - topLeft.Y) * pixelSize.Y);
                     batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), pixel.GetColor());
                 }
-            });
+            }, 
+                drawTopLeft.ToPoint(),
+                drawBottomRight.ToPoint()
+            );
         }
 
         /// <summary>

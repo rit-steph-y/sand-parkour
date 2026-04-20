@@ -156,6 +156,8 @@ namespace HW5_GROUP_PROJECT
 
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
+                    this.sand.xOffset = mouseState.Position.X;
+                    this.sand.yOffset = mouseState.Position.Y;
                     this.sand.Update();
                     stopwatch.Stop();
                     this.SandRollingAvgMs *= .7f;
@@ -183,6 +185,9 @@ namespace HW5_GROUP_PROJECT
             GraphicsDevice.Clear(bgColor);
 
             _spriteBatch.Begin();
+            Point windowSize = new(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
+            // windowSize.X /= 2;
+            // windowSize.Y /= 2;
 
             switch (currentState)
             {
@@ -191,11 +196,11 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.SandSimulation:
-                    this.sand.Draw(this._spriteBatch);
+                    this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
                     break;
 
                 case GameState.Pause:
-                    this.sand.Draw(this._spriteBatch);
+                    this.sand.Draw(this._spriteBatch,  windowSize.ToVector2());
                     pauseMenu.Draw(this._spriteBatch);
                     break;
             }

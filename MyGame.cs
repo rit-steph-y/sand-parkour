@@ -30,6 +30,10 @@ namespace HW5_GROUP_PROJECT
         private Texture2D blankTexture;
         private SpriteFont font;
 
+        private Player player;
+        private Texture2D playerSprite;
+        private Vector2 playerPos;
+
         private Menu mainMenu;
         private Menu pauseMenu;
 
@@ -122,6 +126,8 @@ namespace HW5_GROUP_PROJECT
                     stopwatch.Stop();
                     this.SandRollingAvgMs *= .7f;
                     this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+
+                    player.Update(keyState);
                     break;
 
                 case GameState.Pause:
@@ -146,8 +152,6 @@ namespace HW5_GROUP_PROJECT
 
             _spriteBatch.Begin();
             Point windowSize = new(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
-            // windowSize.X /= 2;
-            // windowSize.Y /= 2;
 
             switch (currentState)
             {
@@ -157,6 +161,7 @@ namespace HW5_GROUP_PROJECT
 
                 case GameState.SandSimulation:
                     this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
+                    this.player.Draw(this._spriteBatch);
                     break;
 
                 case GameState.Pause:

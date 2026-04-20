@@ -41,6 +41,19 @@ namespace HW5_GROUP_PROJECT.sand{
             return this.index & Y_BITS;
         }
 
+        public readonly ZOrderIndex PerElementMin(ZOrderIndex other)
+        {
+            return 
+                ulong.Min(this.XBits(), other.XBits()) | 
+                ulong.Min(this.YBits(), other.YBits());
+        }
+        public readonly ZOrderIndex PerElementMax(ZOrderIndex other)
+        {
+            return 
+                ulong.Max(this.XBits(), other.XBits()) | 
+                ulong.Max(this.YBits(), other.YBits());
+        }
+
         public readonly ZOrderIndex XBitsPlus1()
         {
             return ((this.index | Y_BITS) + 1) & X_BITS;

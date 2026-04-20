@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,10 +11,10 @@ namespace HW5_GROUP_PROJECT.sand
         private LookupTable looseSandTable;
         private byte updateCount = 0;
 
-        public int xScale = 1;
-        public int yScale = 1;
-        public int xOffset = 100;
-        public int yOffset = 100;
+        public int xScale = 2;
+        public int yScale = 2;
+        public float xOffset = 200;
+        public float yOffset = 200;
 
         /// <summary>
         /// the sand grid component
@@ -26,7 +24,7 @@ namespace HW5_GROUP_PROJECT.sand
         {
             if (dev != null){
                 this.tex = new Texture2D(dev, 1, 1);
-                this.tex.SetData(new[] {Color.White});
+                this.tex.SetData([Color.White]);
             }
             this.grid = new();
             this.Init();
@@ -101,57 +99,34 @@ namespace HW5_GROUP_PROJECT.sand
                 }
                 return group;
             });
-
-            uint xRange = 1000;
-            uint yRange = 600;
-
-            Random r = new(0);
-            for (uint x = 0; x < xRange; x++)
-            {
-                for (uint y = 0; y < yRange; y++)
-                {
-                    grid.SetPixel(new(x + 1, y + 1), r.Next(2) == 0 ? PixelId.AIR : PixelId.SAND);
-                }
-            }
         }
 
-        /// <summary>
-        /// map sand pixels to byte values used by the LUT
-        /// </summary>
-        /// <param name="pixel">pixel to convert</param>
-        /// <returns>byte value to use</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private byte FallingSandInterpret(in SandPixel pixel)
+        public void Draw(SpriteBatch batch, Vector2 windowSize)
         {
-            return  pixel.id == PixelId.AIR?                (byte)0: 
-                    pixel.id == PixelId.FALLING_SAND?       (byte)1: 
-                                                            (byte)2;
-        }
-        /// <summary>
-        /// map sand pixels to byte values used by the LUT
-        /// </summary>
-        /// <param name="pixel">pixel to convert</param>
-        /// <returns>byte value to use</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private byte LooseSandInterpret(in SandPixel pixel)
-        {
-            return  pixel.id == PixelId.FALLING_SAND?       (byte)0: 
-                    pixel.id == PixelId.SAND?               (byte)1: 
-                                                            (byte)2;
-        }
+            Vector2 pixelSize = new(this.xScale,this.yScale);
+            Vector2 topLeft = new(this.xOffset, this.yOffset);
+            Vector2 bottomRight = topLeft;
+            topLeft -= windowSize / 2 / pixelSize;
+            bottomRight += windowSize / 2 / pixelSize;
+            Vector2 drawBottomRight = new(
+                bottomRight.X + 1, 
+                bottomRight.Y + 1);
+            Vector2 drawTopLeft = new(
+                topLeft.X, 
+                topLeft.Y);
 
-        // [MethodImpl(MethodImplOptions)]
-        public void Draw(SpriteBatch batch)
-        {
             this.grid.Draw((x,y,pixel) =>
             {
                 if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
                 {
-                    int x1 = (int)x * this.xScale - this.xOffset;
-                    int y1 = (int)y * this.yScale - this.yOffset;
+                    int x1 = (int)((x - topLeft.X) * pixelSize.X);
+                    int y1 = (int)((y - topLeft.Y) * pixelSize.Y);
                     batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), pixel.GetColor());
                 }
-            });
+            }, 
+                drawTopLeft.ToPoint(),
+                drawBottomRight.ToPoint()
+            );
         }
 
         /// <summary>
@@ -185,9 +160,11 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x to set</param>
         /// <param name="y">y to set</param>
         /// <param name="id">id to set tile to.</param>
-        public void SetPixel(uint x, uint y, PixelId id)
+        public void SetPixel(uint x, uint y, PixelId id, Color color)
         {
-            this.grid.SetPixel(new(x,y), id);
+            ref SandPixel pixel = ref this.grid.GetPixel(new(x,y));
+            pixel.id = id;
+            pixel.SetColor(color);
         }
     }
 }

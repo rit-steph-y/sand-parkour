@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 
 namespace HW5_GROUP_PROJECT.sand
 {
@@ -78,11 +79,22 @@ namespace HW5_GROUP_PROJECT.sand
             }
         }
 
-        public void Draw(DrawHandle handle)
+        public void Draw(DrawHandle handle, Point min, Point max)
         {
-
-            ZOrderIndex current = 0;
-            while (current <= this.max)
+            ZOrderIndex zmin = new((uint)int.Max(0,min.X),(uint)int.Max(0,min.Y));
+            ZOrderIndex zmax = new((uint)int.Max(0,max.X),(uint)int.Max(0,max.Y));
+            //clamp z min to range this min -> this max
+            zmin = zmin.PerElementMax(this.min);
+            zmin = zmin.PerElementMin(this.max);
+            //clamp z max to range zmin -> this max
+            zmax = zmax.PerElementMax(zmin);
+            zmax = zmax.PerElementMin(this.max);
+            this.Draw(handle, zmin, zmax);
+        }
+        public void Draw(DrawHandle handle, ZOrderIndex min, ZOrderIndex max)
+        {
+            ZOrderIndex current = min;
+            while (current <= max.PerElementMin(this.max))
             {
                 SandPixel pixel = this.GetPixel(current);
                 handle.Invoke(current.X, current.Y, pixel);

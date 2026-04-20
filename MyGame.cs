@@ -43,10 +43,6 @@ namespace HW5_GROUP_PROJECT
         private KeyboardState prevKeyState;
 
         private Color bgColor = Color.White;
-        private Random rng = new Random();
-        private SandGridComponent sand;
-
-        private float SandRollingAvgMs = 0;
 
         public SandGame()
         {
@@ -57,7 +53,6 @@ namespace HW5_GROUP_PROJECT
 
         protected override void Initialize()
         {
-            this.sand = new(this.GraphicsDevice);
 
             Menu.Rect = new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
@@ -89,8 +84,6 @@ namespace HW5_GROUP_PROJECT
         // Well I think I had to add the switch statment here unless I'm dumb - Jimmy
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            //  Exit();
 
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
@@ -111,14 +104,7 @@ namespace HW5_GROUP_PROJECT
                         PauseGame();
                     }
 
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-                    this.sand.xOffset = mouseState.Position.X;
-                    this.sand.yOffset = mouseState.Position.Y;
-                    this.sand.Update();
-                    stopwatch.Stop();
-                    this.SandRollingAvgMs *= .7f;
-                    this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+                    this.currentScene.Update(gameTime);
 
                     player.Update(keyState);
                     break;
@@ -144,8 +130,7 @@ namespace HW5_GROUP_PROJECT
             GraphicsDevice.Clear(bgColor);
 
             _spriteBatch.Begin();
-            Point windowSize = new(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
-
+            
             switch (currentState)
             {
                 case GameState.MainMenu:
@@ -157,12 +142,12 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.SandSimulation:
-                    this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
+                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
                     this.player.Draw(this._spriteBatch);
                     break;
 
                 case GameState.Pause:
-                    this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
+                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
                     currentMenu.Draw(this._spriteBatch);
                     break;
             }
@@ -184,8 +169,8 @@ namespace HW5_GROUP_PROJECT
 
         internal void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex]);
-            currentScene.LoadLevel(sand);
+            currentScene = new Scene(levels[levelIndex], this.GraphicsDevice);
+            currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }
 

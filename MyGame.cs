@@ -93,6 +93,10 @@ namespace HW5_GROUP_PROJECT
             pauseMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
             pauseMenu.buttons[2].OnButtonClicked += StartSimulation;
 
+            playerSprite = Content.Load<Texture2D>("sandPlayerSprite");
+            playerPos = new Vector2(120,120);
+            this.player = new Player(playerPos, playerSprite);
+            
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 

@@ -18,7 +18,7 @@ namespace HW5_GROUP_PROJECT
         internal void LoadLevel(SandGridComponent sand)
         {
             //initializes an array of colors the exact size of said texture
-            Microsoft.Xna.Framework.Color[] colors = new Microsoft.Xna.Framework.Color[spriteSheet.Height * spriteSheet.Width];
+            Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
 
             //then copys the color data from the texture to the color array
             spriteSheet.GetData(colors);

@@ -1,11 +1,7 @@
 ﻿using HW5_GROUP_PROJECT.sand;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -22,7 +18,7 @@ namespace HW5_GROUP_PROJECT
         internal void LoadLevel(SandGridComponent sand)
         {
             //initializes an array of colors the exact size of said texture
-            Microsoft.Xna.Framework.Color[] colors = new Microsoft.Xna.Framework.Color[spriteSheet.Height * spriteSheet.Width];
+            Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
 
             //then copys the color data from the texture to the color array
             spriteSheet.GetData(colors);
@@ -33,21 +29,21 @@ namespace HW5_GROUP_PROJECT
             // Aj's code 
             uint columns = 0;
             uint rows = 0;
-            foreach (Microsoft.Xna.Framework.Color i in colors)
+            foreach (Color i in colors)
             {
-                if (i == Microsoft.Xna.Framework.Color.Red)
+                if (i == Color.Red)
                 {
-                    sand.SetPixel(columns, rows, PixelId.SAND);
+                    sand.SetPixel(columns, rows, PixelId.SAND, Color.SandyBrown);
                     columns++;
                 }
-                else if (i == Microsoft.Xna.Framework.Color.White)
+                else if (i == Color.White)
                 {
-                    sand.SetPixel(columns, rows, PixelId.AIR);
+                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
                     columns++;
                 }
                 else
                 {
-                    sand.SetPixel(columns, rows, PixelId.INVALID);
+                    sand.SetPixel(columns, rows, PixelId.INVALID, Color.Gray);
                     columns++;
                 }
 

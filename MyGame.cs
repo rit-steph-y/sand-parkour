@@ -33,6 +33,10 @@ namespace HW5_GROUP_PROJECT
 
         private Menu currentMenu;
 
+        private Player player;
+        private Texture2D playerSprite;
+        private Vector2 playerPos;
+
         private MouseState mouseState;
         private MouseState prevMouseState;
         private KeyboardState keyState;
@@ -74,6 +78,10 @@ namespace HW5_GROUP_PROJECT
 
             GoToMainMenu();
 
+            playerSprite = Content.Load<Texture2D>("sandPlayerSprite");
+            playerPos = new Vector2(120,120);
+            this.player = new Player(playerPos, playerSprite);
+            
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
@@ -105,10 +113,14 @@ namespace HW5_GROUP_PROJECT
 
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
+                    this.sand.xOffset = mouseState.Position.X;
+                    this.sand.yOffset = mouseState.Position.Y;
                     this.sand.Update();
                     stopwatch.Stop();
                     this.SandRollingAvgMs *= .7f;
                     this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+
+                    player.Update(keyState);
                     break;
 
                 case GameState.Pause:
@@ -132,6 +144,7 @@ namespace HW5_GROUP_PROJECT
             GraphicsDevice.Clear(bgColor);
 
             _spriteBatch.Begin();
+            Point windowSize = new(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
 
             switch (currentState)
             {
@@ -144,11 +157,12 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.SandSimulation:
-                    this.sand.Draw(this._spriteBatch);
+                    this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
+                    this.player.Draw(this._spriteBatch);
                     break;
 
                 case GameState.Pause:
-                    this.sand.Draw(this._spriteBatch);
+                    this.sand.Draw(this._spriteBatch, windowSize.ToVector2());
                     currentMenu.Draw(this._spriteBatch);
                     break;
             }

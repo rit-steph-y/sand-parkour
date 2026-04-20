@@ -213,13 +213,13 @@ namespace HW5_GROUP_PROJECT
             // Set up the pause menu
             currentMenu = new Menu(blankTexture, Color.Transparent);
 
-            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna));
             currentMenu.buttons[0].OnButtonClicked += Exit;
-            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 165, 60, Color.Wheat, Color.Sienna));
             currentMenu.buttons[1].OnButtonClicked += GoToMainMenu;
-            currentMenu.AddButton(new Button(blankTexture, font, "Skip Level", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(new Button(blankTexture, font, "Skip Level", 165, 60, Color.Wheat, Color.Sienna));
             currentMenu.buttons[2].OnButtonClicked += NextLevel;
-            currentMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(new Button(blankTexture, font, "Resume Game", 165, 60, Color.Wheat, Color.Sienna));
             currentMenu.buttons[3].OnButtonClicked += StartSimulation;
 
             currentState = GameState.Pause;

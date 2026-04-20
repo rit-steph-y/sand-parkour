@@ -93,6 +93,10 @@ namespace HW5_GROUP_PROJECT
                     currentMenu.Update(mouseState, prevMouseState);
                     break;
 
+                case GameState.LevelSelect:
+                    currentMenu.Update(mouseState, prevMouseState);
+                    break;
+
                 case GameState.SandSimulation:
                     if (keyState.IsKeyDown(Keys.Escape) && !prevKeyState.IsKeyDown(Keys.Escape))
                     {
@@ -135,6 +139,10 @@ namespace HW5_GROUP_PROJECT
                     currentMenu.Draw(_spriteBatch);
                     break;
 
+                case GameState.LevelSelect:
+                    currentMenu.Draw(_spriteBatch);
+                    break;
+
                 case GameState.SandSimulation:
                     this.sand.Draw(this._spriteBatch);
                     break;
@@ -148,6 +156,17 @@ namespace HW5_GROUP_PROJECT
 
             base.Draw(gameTime);
         }
+
+
+        internal void NextLevel()
+        {
+            if (levelIndex + 1 < levels.Length)
+            {
+                levelIndex++;
+                StartLevel();
+            }
+        }
+
 
         internal void StartLevel()
         {
@@ -163,14 +182,14 @@ namespace HW5_GROUP_PROJECT
 
         protected void GoToMainMenu()
         {
-            // Set up the main menu
-            // I added a placeholder image
             currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
 
             currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[0].OnButtonClicked += Exit;
-            //currentMenu.AddButton(new Button(blankTexture, font, "Level Select", 175, 75, Color.Wheat, Color.Sienna));
-            //currentMenu.buttons[1].OnButtonClicked += GoToLevelSelect;
+            /*
+            currentMenu.AddButton(new Button(blankTexture, font, "Level Select", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[1].OnButtonClicked += GoToLevelSelect; 
+            */
             currentMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[1].OnButtonClicked += StartLevel;
 
@@ -186,28 +205,34 @@ namespace HW5_GROUP_PROJECT
             currentMenu.buttons[0].OnButtonClicked += Exit;
             currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[1].OnButtonClicked += GoToMainMenu;
+            currentMenu.AddButton(new Button(blankTexture, font, "Skip Level", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[2].OnButtonClicked += NextLevel;
             currentMenu.AddButton(new Button(blankTexture, font, "Resume Game", 175, 75, Color.Wheat, Color.Sienna));
-            currentMenu.buttons[2].OnButtonClicked += StartSimulation;
+            currentMenu.buttons[3].OnButtonClicked += StartSimulation;
 
             currentState = GameState.Pause;
         }
 
-        //private void GoToLevelSelect()
-        //{
-        //    // Set up the Level select
-        //    currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
+        /*
+        private void GoToLevelSelect()
+        {
+            // Set up the Level select
+            currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
 
-        //    currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
-        //    currentMenu.buttons[0].OnButtonClicked += GoToMainMenu;
+            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.buttons[0].OnButtonClicked += GoToMainMenu;
 
-        //    int i = 1;
-        //    foreach (Texture2D level in levels)
-        //    {
-        //        currentMenu.AddButton(new Button(blankTexture, font, level.Name, 175, 75, Color.Wheat, Color.Sienna));
-        //        currentMenu.buttons[i].OnButtonClicked += StartLevel;
-        //    }
+            int i = 1;
+            foreach (Texture2D level in levels)
+            {
+                currentMenu.AddButton(new Button(blankTexture, font, level.Name, 175, 75, Color.Wheat, Color.Sienna));
+                currentMenu.buttons[i].OnButtonClicked += StartLevel;
 
-        //    currentState = GameState.LevelSelect;
-        //}
+                i++;
+            }
+
+            currentState = GameState.LevelSelect;
+        }
+        */
     }
 }

@@ -33,10 +33,6 @@ namespace HW5_GROUP_PROJECT
 
         private Menu currentMenu;
 
-        private Player player;
-        private Texture2D playerSprite;
-        private Vector2 playerPos;
-
         private MouseState mouseState;
         private MouseState prevMouseState;
         private KeyboardState keyState;
@@ -72,10 +68,6 @@ namespace HW5_GROUP_PROJECT
             font = Content.Load<SpriteFont>("NotoSansCJK-JP");
 
             GoToMainMenu();
-
-            playerSprite = Content.Load<Texture2D>("sandPlayerSprite");
-            playerPos = new Vector2(120,120);
-            this.player = new Player(playerPos, playerSprite);
             
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
@@ -105,8 +97,6 @@ namespace HW5_GROUP_PROJECT
                     }
 
                     this.currentScene.Update(gameTime);
-
-                    player.Update(keyState);
                     break;
 
                 case GameState.Pause:
@@ -143,7 +133,6 @@ namespace HW5_GROUP_PROJECT
 
                 case GameState.SandSimulation:
                     this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
-                    this.player.Draw(this._spriteBatch);
                     break;
 
                 case GameState.Pause:
@@ -169,7 +158,7 @@ namespace HW5_GROUP_PROJECT
 
         internal void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex], this.GraphicsDevice);
+            currentScene = new Scene(levels[levelIndex], new Vector2(120,120), this);
             currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }

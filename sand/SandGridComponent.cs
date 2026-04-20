@@ -11,11 +11,6 @@ namespace HW5_GROUP_PROJECT.sand
         private LookupTable looseSandTable;
         private byte updateCount = 0;
 
-        public int xScale = 2;
-        public int yScale = 2;
-        public float xOffset = 200;
-        public float yOffset = 200;
-
         /// <summary>
         /// the sand grid component
         /// </summary>
@@ -101,27 +96,24 @@ namespace HW5_GROUP_PROJECT.sand
             });
         }
 
-        public void Draw(SpriteBatch batch, Vector2 windowSize)
+        public void Draw(SpriteBatch batch, Camera camera)
         {
-            Vector2 pixelSize = new(this.xScale,this.yScale);
-            Vector2 topLeft = new(this.xOffset, this.yOffset);
-            Vector2 bottomRight = topLeft;
-            topLeft -= windowSize / 2 / pixelSize;
-            bottomRight += windowSize / 2 / pixelSize;
+            Vector2 topLeft = camera.TopLeftWorldSpace;
+            Vector2 bottomRight = camera.BottomRightWorldSpace;
             Vector2 drawBottomRight = new(
                 bottomRight.X + 1, 
                 bottomRight.Y + 1);
             Vector2 drawTopLeft = new(
                 topLeft.X, 
                 topLeft.Y);
-
+    
+            Point p = camera.Zoom.ToPoint();
             this.grid.Draw((x,y,pixel) =>
             {
                 if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
                 {
-                    int x1 = (int)((x - topLeft.X) * pixelSize.X);
-                    int y1 = (int)((y - topLeft.Y) * pixelSize.Y);
-                    batch.Draw(this.tex, new Rectangle(new(x1, y1), new(xScale, yScale)), pixel.GetColor());
+                    Point tileTopLeft = camera.FromWorldSpace(new(x,y)).ToPoint();
+                    batch.Draw(this.tex, new Rectangle(tileTopLeft, p), pixel.GetColor());
                 }
             }, 
                 drawTopLeft.ToPoint(),

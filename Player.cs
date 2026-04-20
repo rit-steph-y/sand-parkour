@@ -1,15 +1,12 @@
-﻿using HW5_GROUP_PROJECT.sand;
-using HW5_GROUP_PROJECT.UI;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Diagnostics;
 
 namespace HW5_GROUP_PROJECT
 {
     internal class Player
     {
+        private static Texture2D? cachedPlayerTexture;
         private uint myX = 0;
         private uint myY = 0;
 
@@ -19,20 +16,24 @@ namespace HW5_GROUP_PROJECT
         private int myWidth;
 
         private Texture2D myTexture;
-        internal Player(Vector2 position, Texture2D texture)
+        internal Player(Vector2 position, Game game)
         {
+            if(cachedPlayerTexture == null)
+            {
+                cachedPlayerTexture = game.Content.Load<Texture2D>("sandPlayerSprite");
+            }
+            this.myTexture = cachedPlayerTexture;
             this.myPosition = position;
             this.myX = (uint)position.X;
             this.myY = (uint)position.Y;
 
-            this.myTexture = texture;
-            this.myWidth = texture.Width;
-            this.myHeight = texture.Height;
+            this.myWidth = this.myTexture.Width;
+            this.myHeight = this.myTexture.Height;
         }
 
-        internal void Draw(SpriteBatch sprite)
+        internal void Draw(SpriteBatch sprite, Camera camera)
         {
-            sprite.Draw(myTexture, myPosition, Color.White);
+            sprite.Draw(myTexture, camera.FromWorldSpace(myPosition), Color.White);
         }
 
         internal void Update(KeyboardState state)

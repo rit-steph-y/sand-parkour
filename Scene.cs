@@ -10,20 +10,30 @@ namespace HW5_GROUP_PROJECT
     internal class Scene
     {
         private Texture2D spriteSheet;
+        private Vector2 playerStartPos;
+        private Player player;
+        private Camera camera;
         private float SandRollingAvgMs = 0;
 
         private SandGridComponent sand;
         
-        internal Scene(Texture2D spriteSheet, GraphicsDevice device)
+        internal Scene(Texture2D spriteSheet, Vector2 startPos, Game game)
         {
-            this.sand = new(device);
+            this.playerStartPos = startPos;
+            this.player = new(this.playerStartPos,game);
+            this.camera = new();
+            this.camera.Zoom = new(2);
+
+            this.sand = new(game.GraphicsDevice);
             this.spriteSheet = spriteSheet;
         }
 
         internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch)
         {
-            Point windowSize = new(clientBounds.Width, clientBounds.Height);
-            this.sand.Draw(spriteBatch, windowSize.ToVector2());
+            this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
+            
+            this.sand.Draw(spriteBatch, camera);
+            this.player.Draw(spriteBatch, camera);
         }
 
         internal void LoadLevel()
@@ -69,12 +79,18 @@ namespace HW5_GROUP_PROJECT
         internal void Update(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
+            KeyboardState keyState = Keyboard.GetState();
+
             Stopwatch stopwatch = new Stopwatch();
+
+            this.camera.Center = new(mouseState.Position.X, mouseState.Position.Y);
+
             stopwatch.Start();
-            this.sand.xOffset = mouseState.Position.X;
-            this.sand.yOffset = mouseState.Position.Y;
             this.sand.Update();
             stopwatch.Stop();
+
+            player.Update(keyState);
+
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
 

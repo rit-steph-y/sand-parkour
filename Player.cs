@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HW5_GROUP_PROJECT.sand;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,6 +12,7 @@ namespace HW5_GROUP_PROJECT
         private uint myY => (uint)myPosition.Y;
 
         private Vector2 myPosition;
+        private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
 
         private int myHeight;
         private int myWidth;
@@ -27,8 +29,6 @@ namespace HW5_GROUP_PROJECT
             }
             this.myTexture = cachedPlayerTexture;
             this.myPosition = position;
-            //this.myX = (uint)position.X;
-            //this.myY = (uint)position.Y;
 
             this.myWidth = this.myTexture.Width;
             this.myHeight = this.myTexture.Height;
@@ -36,10 +36,10 @@ namespace HW5_GROUP_PROJECT
 
         internal void Draw(SpriteBatch sprite, Camera camera)
         {
-            sprite.Draw(myTexture, camera.FromWorldSpace(myPosition), Color.White);
+            sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
         }
 
-        internal void Update(KeyboardState state, GameTime time)
+        internal void Update(KeyboardState state, GameTime time, SandGridComponent grid)
         {
             
             myVelocity += myGravity - myFriction * myVelocity;
@@ -65,33 +65,20 @@ namespace HW5_GROUP_PROJECT
             {
                 myVelocity.X =  + 3;
             }
-            this.GetPlayerPosistionVector(myVelocity);
+            this.GetPlayerPosistionVector(grid);
 
 
         }
 
-        private void GetPlayerPosistionVector(Vector2 v) 
+        private void GetPlayerPosistionVector(SandGridComponent grid) 
         {
-            myPosition += v;
-            if (this.Intersects() == true)
+            myPosition += this.myVelocity;
+            if (grid.IsSolid(this.myX, this.myY, (uint)(this.myX + this.myWidth), (uint)(this.myY + this.myHeight)))
             {
                 myVelocity.Y = 0;
                 myPosition.Y = 600 - myHeight;
             }
             
-        }
-
-        private bool Intersects()
-        {
-            // this is the placeholder for collision
-            if (myPosition.Y + myHeight > 600)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         // Player with movement, collisions not implemented yet.

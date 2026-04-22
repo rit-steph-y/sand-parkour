@@ -145,6 +145,10 @@ namespace HW5_GROUP_PROJECT.sand
         /// <returns>if the tile is solid</returns>
         public bool IsSolid(uint minX, uint minY, uint maxX, uint maxY)
         {
+            if(minX > maxX || minY > maxY)
+            {
+                return false;
+            }
             ZCut curr = new ZCut(new(minX, minY), new(maxX, maxY));
             List<ZCut> cutsStack = new();
             int items = 0;
@@ -159,7 +163,7 @@ namespace HW5_GROUP_PROJECT.sand
                 {
                     for(ulong i = curr.min; i <= curr.max; i++)
                     {
-                        if(!this.IsSolid(i))
+                        if(this.IsSolid(i))
                             return true;
                     }
                     if(items == 0)
@@ -173,7 +177,8 @@ namespace HW5_GROUP_PROJECT.sand
         }
         private bool IsSolid(ZOrderIndex index)
         {
-            return this.grid.GetPixel(index).id == PixelId.FALLING_SAND;
+            PixelId id = this.grid.GetPixel(index).id;
+            return id == PixelId.FALLING_SAND || id == PixelId.SAND;
         }
 
         /// <summary>

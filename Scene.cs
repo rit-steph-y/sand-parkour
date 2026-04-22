@@ -108,7 +108,7 @@ namespace HW5_GROUP_PROJECT
             this.sand.Update();
             stopwatch.Stop();
 
-            player.Update(keyState, gameTime);
+            player.Update(keyState, gameTime, this.sand);
 
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;

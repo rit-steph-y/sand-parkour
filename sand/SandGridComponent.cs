@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -141,9 +143,37 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x coordinate to check</param>
         /// <param name="y">y coordinate to check</param>
         /// <returns>if the tile is solid</returns>
-        public bool IsSolid(uint x, uint y)
+        public bool IsSolid(uint minX, uint minY, uint maxX, uint maxY)
         {
-            return this.grid.GetPixel(new(x,y)).id == PixelId.FALLING_SAND;
+            ZCut curr = new ZCut(new(minX, minY), new(maxX, maxY));
+            List<ZCut> cutsStack = new();
+            int items = 0;
+            while (true)
+            {
+                if(curr.Split(out ZCut cut))
+                {
+                    cutsStack.Add(cut);
+                    items ++;
+                }
+                else
+                {
+                    for(ulong i = curr.min; i <= curr.max; i++)
+                    {
+                        if(!this.IsSolid(i))
+                            return true;
+                    }
+                    if(items == 0)
+                        break;
+                    curr = cutsStack[items - 1];
+                    cutsStack.RemoveAt(items - 1);
+                    items --;
+                }
+            }
+            return false;
+        }
+        private bool IsSolid(ZOrderIndex index)
+        {
+            return this.grid.GetPixel(index).id == PixelId.FALLING_SAND;
         }
 
         /// <summary>

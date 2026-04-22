@@ -7,8 +7,8 @@ namespace HW5_GROUP_PROJECT
     internal class Player
     {
         private static Texture2D? cachedPlayerTexture;
-        private uint myX = 0;
-        private uint myY = 0;
+        private uint myX => (uint)myPosition.X;
+        private uint myY => (uint)myPosition.Y;
 
         private Vector2 myPosition;
 
@@ -16,6 +16,9 @@ namespace HW5_GROUP_PROJECT
         private int myWidth;
 
         private Texture2D myTexture;
+        private Vector2 myVelocity;
+        private Vector2 myGravity = new Vector2(0,0.05f);
+        private Vector2 myFriction = new Vector2(1,0);
         internal Player(Vector2 position, Game game)
         {
             if(cachedPlayerTexture == null)
@@ -24,8 +27,8 @@ namespace HW5_GROUP_PROJECT
             }
             this.myTexture = cachedPlayerTexture;
             this.myPosition = position;
-            this.myX = (uint)position.X;
-            this.myY = (uint)position.Y;
+            //this.myX = (uint)position.X;
+            //this.myY = (uint)position.Y;
 
             this.myWidth = this.myTexture.Width;
             this.myHeight = this.myTexture.Height;
@@ -36,34 +39,60 @@ namespace HW5_GROUP_PROJECT
             sprite.Draw(myTexture, camera.FromWorldSpace(myPosition), Color.White);
         }
 
-        internal void Update(KeyboardState state)
+        internal void Update(KeyboardState state, GameTime time)
         {
+            
+            myVelocity += myGravity - myFriction * myVelocity;
             if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up)) {
-                this.myY = this.myY - 3;
+                if (myPosition.Y + myHeight >= 600)
+                {
+                    myVelocity.Y = -4;
+                }
+               
             }
 
             if (state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
             {
-                this.myX = this.myX - 3;
+                myVelocity.X = -3;
             }
 
             if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
             {
-                this.myY = this.myY + 3;
+                myVelocity.Y = + 3;
             }
 
             if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
             {
-                this.myX = this.myX + 3;
+                myVelocity.X =  + 3;
             }
-            this.GetPlayerPosistionVector(myX, myY);
+            this.GetPlayerPosistionVector(myVelocity);
+
+
         }
 
-        private void GetPlayerPosistionVector(uint x, uint y) 
+        private void GetPlayerPosistionVector(Vector2 v) 
         {
-            myPosition = new Vector2(x, y);
+            myPosition += v;
+            if (this.Intersects() == true)
+            {
+                myVelocity.Y = 0;
+                myPosition.Y = 600 - myHeight;
+            }
+            
         }
 
+        private bool Intersects()
+        {
+            // this is the placeholder for collision
+            if (myPosition.Y + myHeight > 600)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         // Player with movement, collisions not implemented yet.
         // the following methods are for convience

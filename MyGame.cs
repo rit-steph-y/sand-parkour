@@ -67,10 +67,10 @@ namespace HW5_GROUP_PROJECT
             backgrounds =
                 [
                     null,
-                    // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
-                    Content.Load<Texture2D>("background2")
+                    null
                 ];
 
+            // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
             backgroundTex = Content.Load<Texture2D>("background");
             Scene.defaultBackground = new Background(backgroundTex, Color.White);
 

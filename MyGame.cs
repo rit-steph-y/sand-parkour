@@ -12,8 +12,7 @@ namespace HW5_GROUP_PROJECT
     {
         MainMenu,
         SandSimulation,
-        Pause,
-        LevelSelect
+        Pause
     }
 
     public class SandGame : Game
@@ -25,8 +24,10 @@ namespace HW5_GROUP_PROJECT
         private GameState currentState;
         private Scene currentScene;
         private Texture2D[] levels;
+        private Texture2D[] backgrounds;
         private int levelIndex = 0;
 
+        private Texture2D backgroundTex;
         // using this for the buttons
         private Texture2D blankTexture;
         private SpriteFont font;
@@ -63,6 +64,14 @@ namespace HW5_GROUP_PROJECT
                     Content.Load<Texture2D>("testLevel"),
                     Content.Load<Texture2D>("testLevel2")
                 ];
+            backgrounds =
+                [
+                    null,
+                    null
+                ];
+
+            backgroundTex = Content.Load<Texture2D>("background");
+            Scene.defaultBackground = new Background(backgroundTex, Color.White);
 
             blankTexture = Content.Load<Texture2D>("blank_tex");
             font = Content.Load<SpriteFont>("NotoSansCJK-JP");
@@ -83,10 +92,6 @@ namespace HW5_GROUP_PROJECT
             switch (currentState)
             {
                 case GameState.MainMenu:
-                    currentMenu.Update(mouseState, prevMouseState);
-                    break;
-
-                case GameState.LevelSelect:
                     currentMenu.Update(mouseState, prevMouseState);
                     break;
 
@@ -127,10 +132,6 @@ namespace HW5_GROUP_PROJECT
                     currentMenu.Draw(_spriteBatch);
                     break;
 
-                case GameState.LevelSelect:
-                    currentMenu.Draw(_spriteBatch);
-                    break;
-
                 case GameState.SandSimulation:
                     this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
                     break;
@@ -158,7 +159,7 @@ namespace HW5_GROUP_PROJECT
 
         internal void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex], new Vector2(120,120), this);
+            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this);
             currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }
@@ -172,7 +173,7 @@ namespace HW5_GROUP_PROJECT
         {
             levelIndex = 0;
 
-            currentMenu = new Menu(Content.Load<Texture2D>("main_menu"), Color.White);
+            currentMenu = new Menu(backgroundTex, Color.White);
 
             currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
             currentMenu.buttons[0].OnButtonClicked += Exit;

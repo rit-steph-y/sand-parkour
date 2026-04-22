@@ -67,7 +67,7 @@ namespace HW5_GROUP_PROJECT
             backgrounds =
                 [
                     null,
-                    null
+                    Content.Load<Texture2D>("background2")
                 ];
 
             backgroundTex = Content.Load<Texture2D>("background");

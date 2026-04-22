@@ -46,7 +46,6 @@ namespace HW5_GROUP_PROJECT.UI
             }
         }
 
-
         internal override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(tex, Rect, color);

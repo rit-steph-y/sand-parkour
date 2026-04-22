@@ -19,19 +19,6 @@ namespace HW5_GROUP_PROJECT
         private float SandRollingAvgMs = 0;
 
         private SandGridComponent sand;
-        
-        //internal Scene(Texture2D spriteSheet, Vector2 startPos, Game game)
-        //{
-        //    this.playerStartPos = startPos;
-        //    this.player = new(this.playerStartPos,game);
-        //    this.camera = new();
-        //    this.camera.Zoom = new(2);
-
-        //    this.sand = new(game.GraphicsDevice);
-        //    this.spriteSheet = spriteSheet;
-
-        //    background = defaultBackground;
-        //}
 
         internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Game game)
         {

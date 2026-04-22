@@ -23,11 +23,10 @@ namespace HW5_GROUP_PROJECT.UI
         internal Button(Texture2D tex, SpriteFont font, string label, int width, int height,
             Microsoft.Xna.Framework.Color color, Microsoft.Xna.Framework.Color textColor) : base(tex, origin, color)
         {
-
             rect = new Microsoft.Xna.Framework.Rectangle(0, 0, width, height);
 
+            // centering text on the button
             textSize = font.MeasureString(label);
-
             textBox = new TextBox
                 (font, label, new Vector2(rect.X + width / 2 - textSize.X / 2, rect.Y + height / 2 - textSize.Y / 2), textColor);
         }

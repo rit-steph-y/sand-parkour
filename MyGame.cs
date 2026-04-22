@@ -28,7 +28,6 @@ namespace HW5_GROUP_PROJECT
         private int levelIndex = 0;
 
         private Texture2D backgroundTex;
-        // using this for the buttons
         private Texture2D blankTexture;
         private SpriteFont font;
 
@@ -64,9 +63,11 @@ namespace HW5_GROUP_PROJECT
                     Content.Load<Texture2D>("testLevel"),
                     Content.Load<Texture2D>("testLevel2")
                 ];
+            // Add corresponding backgrounds here
             backgrounds =
                 [
                     null,
+                    // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
                     Content.Load<Texture2D>("background2")
                 ];
 
@@ -82,7 +83,6 @@ namespace HW5_GROUP_PROJECT
         }
 
         // There is no need to add anything to Game1's Update method!
-        // Well I think I had to add the switch statment here unless I'm dumb - Jimmy
         protected override void Update(GameTime gameTime)
         {
 
@@ -156,7 +156,6 @@ namespace HW5_GROUP_PROJECT
             }
         }
 
-
         internal void StartLevel()
         {
             currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this);
@@ -185,7 +184,6 @@ namespace HW5_GROUP_PROJECT
 
         protected void PauseGame()
         {
-            // Set up the pause menu
             currentMenu = new Menu(blankTexture, Color.Transparent);
 
             currentMenu.AddButton(new Button(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna));

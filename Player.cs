@@ -43,7 +43,7 @@ namespace HW5_GROUP_PROJECT
         {
             
             myVelocity += myGravity - myFriction * myVelocity;
-            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up)) {
+            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.Space)) {
                 if (this.IsColliding(grid) == true)
                 {
                     myVelocity.Y = -4;

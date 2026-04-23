@@ -43,8 +43,8 @@ namespace HW5_GROUP_PROJECT
         {
             
             myVelocity += myGravity - myFriction * myVelocity;
-            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up)) {
-                if (myPosition.Y + myHeight >= 600)
+            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.Space)) {
+                if (this.IsColliding(grid) == true)
                 {
                     myVelocity.Y = -4;
                 }
@@ -58,7 +58,10 @@ namespace HW5_GROUP_PROJECT
 
             if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
             {
-                myVelocity.Y = + 3;
+                if (this.IsColliding(grid) == false)
+                {
+                    myVelocity.Y = +3;
+                }
             }
 
             if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
@@ -76,9 +79,22 @@ namespace HW5_GROUP_PROJECT
             if (grid.IsSolid(this.myX, this.myY, (uint)(this.myX + this.myWidth), (uint)(this.myY + this.myHeight)))
             {
                 myVelocity.Y = 0;
-                myPosition.Y = 600 - myHeight;
+                myPosition.Y = this.myY;
             }
             
+            // check for going out of bounds, will cause a crash.
+            if (this.myX <=1) { myPosition.X = 1; myVelocity.X = 1; }
+            if (this.myX + this.myWidth >= 1000) { myPosition.X = 999 - this.myWidth; myVelocity.X = 0; }
+            if (this.myY <= 1) { myPosition.Y = 1; myVelocity.Y = 1; }
+        }
+
+        private bool IsColliding (SandGridComponent grid)
+        {
+            if (grid.IsSolid(this.myX, this.myY, (uint)(this.myX + this.myWidth), (uint)(this.myY + this.myHeight)))
+            {
+                return true;
+            }
+            else { return false; }
         }
 
         // Player with movement, collisions not implemented yet.

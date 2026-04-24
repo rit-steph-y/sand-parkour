@@ -104,3 +104,10 @@
 /processorParam:TextureFormat=Color
 /build:testLevel2.png
 
+#begin TitleFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:TitleFont.spritefont
+

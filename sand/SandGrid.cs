@@ -7,7 +7,7 @@ namespace HW5_GROUP_PROJECT.sand
 {
     public struct SandGrid
     {
-        public delegate void DrawHandle(uint x, uint y, SandPixel pixel);
+        public delegate void DrawHandle(int x, int y, SandPixel pixel);
 
         public const ulong CHUNK_WIDTH = 1 << CHUNK_BITS;
         public const uint INDEX_IN_CHUNK_MASK = (1 << CHUNK_BITS_TOTAL) - 1;
@@ -25,18 +25,14 @@ namespace HW5_GROUP_PROJECT.sand
         }
 
         private readonly Dictionary<ZOrderIndex, SandChunk> chunks;
-        private ZOrderIndex min = 0;
-        private ZOrderIndex max = new(1023,1023);
+        private ZOrderIndex min = ToUintRange(Point.Zero);
+        private ZOrderIndex max = ToUintRange(new Point(1023,1023));
         private SandChunk lastOptChunk;
         private ZOrderIndex lastHash = 0;
 
         public SandGrid()
         {
             this.chunks = [];
-            this.AddChunk(0);
-            this.AddChunk(1);
-            this.AddChunk(2);
-            this.AddChunk(3);
         }
         private void AddChunk(ZOrderIndex z)
         {
@@ -79,10 +75,14 @@ namespace HW5_GROUP_PROJECT.sand
             }
         }
 
+        private static uint ToUintRange(int x) => 0x80_00_00_00 ^ ((uint)x);
+        public static ZOrderIndex ToUintRange(Point p) => new(ToUintRange(p.X), ToUintRange(p.Y));
+        private static int FromUintRange(uint x) => (int)(0x80_00_00_00 ^ x);
+
         public void Draw(DrawHandle handle, Point min, Point max)
         {
-            ZOrderIndex zmin = new((uint)int.Max(0,min.X),(uint)int.Max(0,min.Y));
-            ZOrderIndex zmax = new((uint)int.Max(0,max.X),(uint)int.Max(0,max.Y));
+            ZOrderIndex zmin = ToUintRange(min);
+            ZOrderIndex zmax = ToUintRange(max);
             //clamp z min to range this min -> this max
             zmin = zmin.PerElementMax(this.min);
             zmin = zmin.PerElementMin(this.max);
@@ -97,7 +97,7 @@ namespace HW5_GROUP_PROJECT.sand
             while (current <= max.PerElementMin(this.max))
             {
                 SandPixel pixel = this.GetPixel(current);
-                handle.Invoke(current.X, current.Y, pixel);
+                handle.Invoke(FromUintRange(current.X), FromUintRange(current.Y), pixel);
                 current ++;
             }
         }
@@ -141,6 +141,10 @@ namespace HW5_GROUP_PROJECT.sand
             ToChunkAndSubpos(index, out ZOrderIndex chunkZ, out uint sub_z);
             if (chunkZ != this.lastHash)
             {
+                if (!this.chunks.ContainsKey(chunkZ))
+                {
+                    this.AddChunk(chunkZ);
+                }
                 this.lastOptChunk = this.chunks[chunkZ];
                 this.lastHash = chunkZ;
             }

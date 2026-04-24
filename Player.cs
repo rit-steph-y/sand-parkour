@@ -8,8 +8,8 @@ namespace HW5_GROUP_PROJECT
     internal class Player
     {
         private static Texture2D? cachedPlayerTexture;
-        private uint myX => (uint)myPosition.X;
-        private uint myY => (uint)myPosition.Y;
+        private int myX => (int)myPosition.X;
+        private int myY => (int)myPosition.Y;
 
         private Vector2 myPosition;
         private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
@@ -76,25 +76,21 @@ namespace HW5_GROUP_PROJECT
         private void GetPlayerPosistionVector(SandGridComponent grid) 
         {
             myPosition += this.myVelocity;
-            if (grid.IsSolid(this.myX, this.myY, (uint)(this.myX + this.myWidth), (uint)(this.myY + this.myHeight)))
+            if (IsColliding(grid))
             {
                 myVelocity.Y = 0;
                 myPosition.Y = this.myY;
             }
             
-            // check for going out of bounds, will cause a crash.
-            if (this.myX <=1) { myPosition.X = 1; myVelocity.X = 1; }
-            if (this.myX + this.myWidth >= 1000) { myPosition.X = 999 - this.myWidth; myVelocity.X = 0; }
-            if (this.myY <= 1) { myPosition.Y = 1; myVelocity.Y = 1; }
+            // // check for going out of bounds, will cause a crash.
+            // if (this.myX <=1) { myPosition.X = 1; myVelocity.X = 1; }
+            // if (this.myX + this.myWidth >= 1000) { myPosition.X = 999 - this.myWidth; myVelocity.X = 0; }
+            // if (this.myY <= 1) { myPosition.Y = 1; myVelocity.Y = 1; }
         }
 
         private bool IsColliding (SandGridComponent grid)
         {
-            if (grid.IsSolid(this.myX, this.myY, (uint)(this.myX + this.myWidth), (uint)(this.myY + this.myHeight)))
-            {
-                return true;
-            }
-            else { return false; }
+            return grid.IsSolid(this.myPosition.ToPoint(), this.myPosition.ToPoint() + new Point(this.myWidth, this.myHeight));
         }
 
         // Player with movement, collisions not implemented yet.

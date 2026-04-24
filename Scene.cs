@@ -62,31 +62,21 @@ namespace HW5_GROUP_PROJECT
             Console.WriteLine($"{colors[0]}");
 
             // Aj's code 
-            uint columns = 0;
-            uint rows = 0;
+            int columns = 0;
+            int rows = 0;
             foreach (Color i in colors)
             {
+                Point position = new(columns, rows);
                 if (i == Color.Red)
-                {
-                    sand.SetPixel(columns, rows, PixelId.SAND, Color.SandyBrown);
-                    columns++;
-                }
+                    sand.SetPixel(position, PixelId.SAND, Color.SandyBrown);
                 else if (i == Color.White)
-                {
-                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
-                    columns++;
-                }
+                    sand.SetPixel(position, PixelId.AIR, Color.White);
                 else if (i == Color.Blue)
-                {
-                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, Color.White);
-                    columns++;
-                }
+                    sand.SetPixel(position, PixelId.FALLING_SAND, Color.White);
                 else
-                {
-                    sand.SetPixel(columns, rows, PixelId.INVALID, Color.Gray);
-                    columns++;
-                }
-
+                    sand.SetPixel(position, PixelId.INVALID, Color.Gray);
+                
+                columns++;
                 if (columns >= spriteSheet.Width)
                 {
                     rows++;

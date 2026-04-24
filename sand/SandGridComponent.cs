@@ -143,13 +143,13 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x coordinate to check</param>
         /// <param name="y">y coordinate to check</param>
         /// <returns>if the tile is solid</returns>
-        public bool IsSolid(uint minX, uint minY, uint maxX, uint maxY)
+        public bool IsSolid(Point min, Point max)
         {
-            if(minX > maxX || minY > maxY)
+            if(min.X > max.X || min.Y > max.Y)
             {
                 return false;
             }
-            ZCut curr = new ZCut(new(minX, minY), new(maxX, maxY));
+            ZCut curr = new ZCut(SandGrid.ToUintRange(min), SandGrid.ToUintRange(max));
             List<ZCut> cutsStack = new();
             int items = 0;
             while (true)
@@ -187,9 +187,9 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x to set</param>
         /// <param name="y">y to set</param>
         /// <param name="id">id to set tile to.</param>
-        public void SetPixel(uint x, uint y, PixelId id, Color color)
+        public void SetPixel(Point point, PixelId id, Color color)
         {
-            ref SandPixel pixel = ref this.grid.GetPixel(new(x,y));
+            ref SandPixel pixel = ref this.grid.GetPixel(SandGrid.ToUintRange(point));
             pixel.id = id;
             pixel.SetColor(color);
         }

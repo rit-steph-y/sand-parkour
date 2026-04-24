@@ -82,7 +82,8 @@ namespace HW5_GROUP_PROJECT
                 }
                 else if (i == Color.Blue)
                 {
-                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, Color.White);
+                    int colorMod = rng.Next(-10, 10);
+                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, new Color(245 + colorMod, 222 + colorMod, 179 + colorMod));
                     columns++;
                 }
                 else

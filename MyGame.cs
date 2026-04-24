@@ -72,8 +72,7 @@ namespace HW5_GROUP_PROJECT
                 [
                     null,
                     null,
-                    // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
-                    Content.Load<Texture2D>("background2")
+                    null
                 ];
 
             // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>

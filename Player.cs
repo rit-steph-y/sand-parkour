@@ -46,13 +46,34 @@ namespace HW5_GROUP_PROJECT
             this.myPosition = position;
             PlayerState state = PlayerState.LookRight;
 
+            // I would manually set a width and height for the collision so it doesn't include the antlers
+            // You would have to calculate some sort of offset when drawing the sprite so it draws in the right place though
             this.myWidth = this.myTexture.Width;
             this.myHeight = this.myTexture.Height;
         }
 
         internal void Draw(SpriteBatch sprite, Camera camera)
         {
-            sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
+            switch (playerState)
+            {
+                case PlayerState.LookRight:
+                    sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
+                    break;
+                case PlayerState.LookLeft:
+                    break;
+                case PlayerState.WalkRight:
+                    break;
+                case PlayerState.WalkLeft:
+                    break;
+                case PlayerState.JumpRight:
+                    break;
+                case PlayerState.JumpLeft:
+                    break;
+                case PlayerState.FallRight:
+                    break;
+                case PlayerState.FallLeft:
+                    break;
+            }
         }
 
         internal void Update(KeyboardState state, GameTime time, SandGridComponent grid)
@@ -82,27 +103,6 @@ namespace HW5_GROUP_PROJECT
                 myVelocity.X =  + 3;
             }
             this.GetPlayerPosistionVector(grid);
-
-
-            switch (playerState)
-            {
-                case PlayerState.LookRight:
-                    break;
-                case PlayerState.LookLeft:
-                    break;
-                case PlayerState.WalkRight:
-                    break;
-                case PlayerState.WalkLeft:
-                    break;
-                case PlayerState.JumpRight:
-                    break;
-                case PlayerState.JumpLeft:
-                    break;
-                case PlayerState.FallRight:
-                    break;
-                case PlayerState.FallLeft:
-                    break;
-            }
         }
 
         private void GetPlayerPosistionVector(SandGridComponent grid) 

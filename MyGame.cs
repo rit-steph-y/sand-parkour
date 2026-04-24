@@ -40,6 +40,8 @@ namespace HW5_GROUP_PROJECT
         private KeyboardState keyState;
         private KeyboardState prevKeyState;
 
+        private Random rng = new Random();
+
         private Color bgColor = Color.White;
 
         public SandGame()
@@ -172,7 +174,7 @@ namespace HW5_GROUP_PROJECT
 
         private void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this);
+            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this, rng);
             currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }

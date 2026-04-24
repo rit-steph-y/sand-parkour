@@ -17,10 +17,11 @@ namespace HW5_GROUP_PROJECT
         private Player player;
         private Camera camera;
         private float SandRollingAvgMs = 0;
+        private Random rng;
 
         private SandGridComponent sand;
 
-        internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Game game)
+        internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Game game, Random rng)
         {
             this.playerStartPos = startPos;
             this.player = new(this.playerStartPos, game);
@@ -38,6 +39,8 @@ namespace HW5_GROUP_PROJECT
             {
                 this.background = defaultBackground;
             }
+
+            this.rng = rng;
         }
 
         internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch)
@@ -68,7 +71,8 @@ namespace HW5_GROUP_PROJECT
             {
                 if (i == Color.Red)
                 {
-                    sand.SetPixel(columns, rows, PixelId.SAND, Color.SandyBrown);
+                    int colorMod = rng.Next(-10, 10);
+                    sand.SetPixel(columns, rows, PixelId.SAND, new Color(244 + colorMod, 164 + colorMod, 96 + colorMod));
                     columns++;
                 }
                 else if (i == Color.White)

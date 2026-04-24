@@ -5,11 +5,25 @@ using Microsoft.Xna.Framework.Input;
 
 namespace HW5_GROUP_PROJECT
 {
+    internal enum PlayerState
+    {
+        LookRight,
+        LookLeft,
+        WalkRight,
+        WalkLeft,
+        JumpRight,
+        JumpLeft,
+        FallRight,
+        FallLeft
+    }
+
     internal class Player
     {
         private static Texture2D? cachedPlayerTexture;
         private uint myX => (uint)myPosition.X;
         private uint myY => (uint)myPosition.Y;
+
+        private PlayerState playerState;
 
         private Vector2 myPosition;
         private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
@@ -25,10 +39,12 @@ namespace HW5_GROUP_PROJECT
         {
             if(cachedPlayerTexture == null)
             {
+                // https://lucky-loops.itch.io/character-satyr?download Credit technically not required
                 cachedPlayerTexture = game.Content.Load<Texture2D>("sandPlayerSprite");
             }
             this.myTexture = cachedPlayerTexture;
             this.myPosition = position;
+            PlayerState state = PlayerState.LookRight;
 
             this.myWidth = this.myTexture.Width;
             this.myHeight = this.myTexture.Height;
@@ -68,6 +84,25 @@ namespace HW5_GROUP_PROJECT
             this.GetPlayerPosistionVector(grid);
 
 
+            switch (playerState)
+            {
+                case PlayerState.LookRight:
+                    break;
+                case PlayerState.LookLeft:
+                    break;
+                case PlayerState.WalkRight:
+                    break;
+                case PlayerState.WalkLeft:
+                    break;
+                case PlayerState.JumpRight:
+                    break;
+                case PlayerState.JumpLeft:
+                    break;
+                case PlayerState.FallRight:
+                    break;
+                case PlayerState.FallLeft:
+                    break;
+            }
         }
 
         private void GetPlayerPosistionVector(SandGridComponent grid) 

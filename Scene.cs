@@ -80,6 +80,11 @@ namespace HW5_GROUP_PROJECT
                     sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
                     columns++;
                 }
+                else if (i == Color.Blue)
+                {
+                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, Color.White);
+                    columns++;
+                }
                 else
                 {
                     sand.SetPixel(columns, rows, PixelId.INVALID, Color.Gray);
@@ -107,7 +112,7 @@ namespace HW5_GROUP_PROJECT
             this.sand.Update();
             stopwatch.Stop();
 
-            player.Update(keyState);
+            player.Update(keyState, gameTime, this.sand);
 
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;

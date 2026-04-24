@@ -76,6 +76,7 @@ namespace HW5_GROUP_PROJECT
                     Content.Load<Texture2D>("background2")
                 ];
 
+            // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
             backgroundTex = Content.Load<Texture2D>("background");
             Scene.defaultBackground = new Background(backgroundTex, Color.White);
 

@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
@@ -17,6 +18,13 @@ namespace HW5_GROUP_PROJECT
         public readonly Vector2 FromWorldSpace(Vector2 vec)
         {
             return (vec - Center) * Zoom + ClientBounds * .5f;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Rectangle FromWorldSpaceRect(Vector2 min, Vector2 max)
+        {
+            Point minPoint = this.FromWorldSpace(min).ToPoint();
+            return new(minPoint, this.FromWorldSpace(max).ToPoint() - minPoint);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

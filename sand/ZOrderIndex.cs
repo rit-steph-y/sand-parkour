@@ -63,5 +63,29 @@ namespace HW5_GROUP_PROJECT.sand{
         {
             return ((this.index | X_BITS) + 1) & Y_BITS;            
         }
+
+        /// <summary>
+        /// this method does not check if the bits you are setting
+        /// are only Y! attempting to set also X bits will result in
+        /// undefined behavior
+        /// </summary>
+        /// <param name="bits">the Y bits to set</param>
+        public void SetYBits(ulong bits)
+        {
+            this.index &= X_BITS;
+            this.index |= bits;
+        }
+
+        /// <summary>
+        /// this method does not check if the bits you are setting
+        /// are only X! attempting to set also y bits will result in
+        /// undefined behavior
+        /// </summary>
+        /// <param name="bits">the X bits to set</param>
+        public void SetXBits(ulong bits)
+        {
+            this.index &= Y_BITS;
+            this.index |= bits;
+        }
     }
 }

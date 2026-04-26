@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -29,6 +30,7 @@ namespace HW5_GROUP_PROJECT
 
         private Texture2D backgroundTex;
         private Texture2D blankTexture;
+        private SpriteFont titleFont;
         private SpriteFont font;
 
         private Menu currentMenu;
@@ -37,6 +39,8 @@ namespace HW5_GROUP_PROJECT
         private MouseState prevMouseState;
         private KeyboardState keyState;
         private KeyboardState prevKeyState;
+
+        private Random rng = new Random();
 
         private Color bgColor = Color.White;
 
@@ -67,6 +71,7 @@ namespace HW5_GROUP_PROJECT
             backgrounds =
                 [
                     null,
+                    null,
                     null
                 ];
 
@@ -75,9 +80,10 @@ namespace HW5_GROUP_PROJECT
             Scene.defaultBackground = new Background(backgroundTex, Color.White);
 
             blankTexture = Content.Load<Texture2D>("blank_tex");
+            titleFont = Content.Load<SpriteFont>("TitleFont");
             font = Content.Load<SpriteFont>("NotoSansCJK-JP");
 
-            GoToMainMenu();
+            MainMenu();
             
             _spriteBatch = new SpriteBatch(GraphicsDevice);
         }
@@ -146,38 +152,52 @@ namespace HW5_GROUP_PROJECT
             base.Draw(gameTime);
         }
 
-
-        internal void NextLevel()
+        private void NextLevel()
         {
             if (levelIndex + 1 < levels.Length)
             {
                 levelIndex++;
                 StartLevel();
             }
+
+            else
+            {
+                EndScreen();
+            }
         }
 
-        internal void StartLevel()
+        private void RestartGame()
         {
-            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this);
+            levelIndex = 0;
+            StartLevel();
+        }
+
+        private void StartLevel()
+        {
+            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this, rng);
             currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }
 
-        protected void StartSimulation()
+        private void StartSimulation()
         {
             currentState = GameState.SandSimulation;
         }
 
-        protected void GoToMainMenu()
+        protected void MainMenu()
         {
             levelIndex = 0;
 
             currentMenu = new Menu(backgroundTex, Color.White);
 
-            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna));
+            // Buttons
+            currentMenu.AddButton(blankTexture, font, "Quit", 175, 75, Color.Wheat, Color.Sienna);
             currentMenu.buttons[0].OnButtonClicked += Exit;
-            currentMenu.AddButton(new Button(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(blankTexture, font, "Start Game", 175, 75, Color.Wheat, Color.Sienna);
             currentMenu.buttons[1].OnButtonClicked += StartLevel;
+
+            // Text
+            currentMenu.AddText(titleFont, "SAND", Color.Black);
 
             currentState = GameState.MainMenu;
         }
@@ -186,16 +206,37 @@ namespace HW5_GROUP_PROJECT
         {
             currentMenu = new Menu(blankTexture, Color.Transparent);
 
-            currentMenu.AddButton(new Button(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna));
+            // Buttons
+            currentMenu.AddButton(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna);
             currentMenu.buttons[0].OnButtonClicked += Exit;
-            currentMenu.AddButton(new Button(blankTexture, font, "Main Menu", 165, 60, Color.Wheat, Color.Sienna));
-            currentMenu.buttons[1].OnButtonClicked += GoToMainMenu;
-            currentMenu.AddButton(new Button(blankTexture, font, "Skip Level", 165, 60, Color.Wheat, Color.Sienna));
+            currentMenu.AddButton(blankTexture, font, "Main Menu", 165, 60, Color.Wheat, Color.Sienna);
+            currentMenu.buttons[1].OnButtonClicked += MainMenu;
+            currentMenu.AddButton(blankTexture, font, "Skip Level\n(Debug)", 165, 60, Color.Wheat, Color.Sienna);
             currentMenu.buttons[2].OnButtonClicked += NextLevel;
-            currentMenu.AddButton(new Button(blankTexture, font, "Resume Game", 165, 60, Color.Wheat, Color.Sienna));
-            currentMenu.buttons[3].OnButtonClicked += StartSimulation;
+            currentMenu.AddButton(blankTexture, font, "Restart Level", 165, 60, Color.Wheat, Color.Sienna);
+            currentMenu.buttons[3].OnButtonClicked += StartLevel;
+            currentMenu.AddButton(blankTexture, font, "Resume Game", 165, 60, Color.Wheat, Color.Sienna);
+            currentMenu.buttons[4].OnButtonClicked += StartSimulation;
+
+            // Text
+            currentMenu.AddText(titleFont, "Paused", Color.Black);
 
             currentState = GameState.Pause;
+        }
+
+        private void EndScreen()
+        {
+            currentMenu = new Menu(backgrounds.Last(), Color.White);
+
+            // Buttons
+            currentMenu.AddButton(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna);
+            currentMenu.buttons[0].OnButtonClicked += Exit;
+            currentMenu.AddButton(blankTexture, font, "Restart Game", 165, 60, Color.Wheat, Color.Sienna);
+            currentMenu.buttons[1].OnButtonClicked += RestartGame;
+
+            // Text
+            currentMenu.AddText(titleFont, "END", Color.Black);
+            currentMenu.AddText(font, "You Won!", new Vector2(Menu.Rect.Width - 100, 75), Color.Black);
         }
     }
 }

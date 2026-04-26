@@ -19,6 +19,8 @@ namespace HW5_GROUP_PROJECT
         private Camera camera;
         //profiling vars, used to track average time per tick
         private double RollingAvgUpdateTime = 0;
+        //profiling vars, used to track average time per tick
+        private double RollingAvgDrawCpuTime = 0;
         //as well as configure how responsive the rolling average is.
         private double UpdateTimeDecayRate = .1f;
         private Random rng;
@@ -49,16 +51,28 @@ namespace HW5_GROUP_PROJECT
 
         internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch, SpriteFont? debugFont)
         {
-            background.Draw(spriteBatch);
+            Stopwatch stopwatch = new Stopwatch();
 
-            this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
-            
-            this.sand.Draw(spriteBatch, camera);
-            this.player.Draw(spriteBatch, camera);
-            if (debugFont != null)
+            stopwatch.Start();
+
             {
-                spriteBatch.DrawString(debugFont,$"avg update time: {this.RollingAvgUpdateTime}ms",Vector2.Zero, Color.White);
+                background.Draw(spriteBatch);
+
+                this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
+                
+                this.sand.Draw(spriteBatch, camera);
+                this.player.Draw(spriteBatch, camera);
+                if (debugFont != null)
+                {
+                    spriteBatch.DrawString(debugFont,$"avg update time: {this.RollingAvgUpdateTime:F2}ms",Vector2.Zero, Color.White);
+                    spriteBatch.DrawString(debugFont,$"avg draw cpu time: {this.RollingAvgDrawCpuTime:F2}ms",new(0,30), Color.White);
+                }
             }
+
+            stopwatch.Stop();
+
+            this.RollingAvgDrawCpuTime *= 1 - this.UpdateTimeDecayRate;
+            this.RollingAvgDrawCpuTime += this.UpdateTimeDecayRate * stopwatch.Elapsed.TotalMilliseconds;
         }
 
         internal void LoadLevel()
@@ -104,7 +118,6 @@ namespace HW5_GROUP_PROJECT
 
         internal void Update(GameTime gameTime)
         {
-            MouseState mouseState = Mouse.GetState();
             KeyboardState keyState = Keyboard.GetState();
 
             Stopwatch stopwatch = new Stopwatch();

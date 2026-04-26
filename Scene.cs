@@ -75,7 +75,7 @@ namespace HW5_GROUP_PROJECT
                     sand.SetPixel(position, PixelId.FALLING_SAND, Color.White);
                 else
                     sand.SetPixel(position, PixelId.INVALID, Color.Gray);
-                
+
                 columns++;
                 if (columns >= spriteSheet.Width)
                 {
@@ -92,13 +92,12 @@ namespace HW5_GROUP_PROJECT
 
             Stopwatch stopwatch = new Stopwatch();
 
-            this.camera.Center = new(mouseState.Position.X, mouseState.Position.Y);
-
             stopwatch.Start();
             this.sand.Update();
             stopwatch.Stop();
 
             player.Update(keyState, gameTime, this.sand);
+            this.camera.TweenTo(this.player.Center,10,(float)gameTime.ElapsedGameTime.TotalSeconds);
 
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;

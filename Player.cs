@@ -10,7 +10,7 @@ namespace HW5_GROUP_PROJECT
         private static Texture2D? cachedPlayerTexture;
         private int myX => (int)myPosition.X;
         private int myY => (int)myPosition.Y;
-
+        public Vector2 Center => myPosition + new Vector2(myWidth, myHeight) * .5f;
         private Vector2 myPosition;
         private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
 

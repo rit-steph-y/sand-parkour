@@ -112,7 +112,7 @@ namespace HW5_GROUP_PROJECT.sand
             Point p = camera.Zoom.ToPoint();
             this.grid.Draw((x,y,pixel) =>
             {
-                if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
+                if (pixel.id != PixelId.AIR)
                 {
                     Point tileTopLeft = camera.FromWorldSpace(new(x,y)).ToPoint();
                     batch.Draw(this.tex, new Rectangle(tileTopLeft, p), pixel.GetColor());
@@ -178,7 +178,7 @@ namespace HW5_GROUP_PROJECT.sand
         private bool IsSolid(ZOrderIndex index)
         {
             PixelId id = this.grid.GetPixel(index).id;
-            return id == PixelId.FALLING_SAND || id == PixelId.SAND;
+            return id != PixelId.AIR;
         }
 
         /// <summary>

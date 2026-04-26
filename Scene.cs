@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -16,7 +17,10 @@ namespace HW5_GROUP_PROJECT
         private Vector2 playerStartPos;
         private Player player;
         private Camera camera;
-        private float SandRollingAvgMs = 0;
+        //profiling vars, used to track average time per tick
+        private double RollingAvgUpdateTime = 0;
+        //as well as configure how responsive the rolling average is.
+        private double UpdateTimeDecayRate = .1f;
         private Random rng;
 
         private SandGridComponent sand;
@@ -43,7 +47,7 @@ namespace HW5_GROUP_PROJECT
             this.rng = rng;
         }
 
-        internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch)
+        internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch, SpriteFont? debugFont)
         {
             background.Draw(spriteBatch);
 
@@ -51,6 +55,10 @@ namespace HW5_GROUP_PROJECT
             
             this.sand.Draw(spriteBatch, camera);
             this.player.Draw(spriteBatch, camera);
+            if (debugFont != null)
+            {
+                spriteBatch.DrawString(debugFont,$"avg update time: {this.RollingAvgUpdateTime}ms",Vector2.Zero, Color.White);
+            }
         }
 
         internal void LoadLevel()
@@ -102,14 +110,16 @@ namespace HW5_GROUP_PROJECT
             Stopwatch stopwatch = new Stopwatch();
 
             stopwatch.Start();
+            
             this.sand.Update();
-            stopwatch.Stop();
 
             player.Update(keyState, gameTime, this.sand);
             this.camera.TweenTo(this.player.Center,10,(float)gameTime.ElapsedGameTime.TotalSeconds);
 
-            this.SandRollingAvgMs *= .7f;
-            this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+            stopwatch.Stop();
+
+            this.RollingAvgUpdateTime *= 1 - this.UpdateTimeDecayRate;
+            this.RollingAvgUpdateTime += this.UpdateTimeDecayRate * stopwatch.Elapsed.TotalMilliseconds;
 
         }
     }

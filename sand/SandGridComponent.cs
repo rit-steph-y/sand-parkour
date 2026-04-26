@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -106,8 +107,8 @@ namespace HW5_GROUP_PROJECT.sand
                 bottomRight.X + 1, 
                 bottomRight.Y + 1);
             Vector2 drawTopLeft = new(
-                topLeft.X, 
-                topLeft.Y);
+                topLeft.X - 1, 
+                topLeft.Y - 1);
     
             Point p = camera.Zoom.ToPoint();
             this.grid.Draw((x,y,pixel) =>
@@ -154,7 +155,7 @@ namespace HW5_GROUP_PROJECT.sand
             int items = 0;
             while (true)
             {
-                if(curr.Split(out ZCut cut))
+                if(curr.Split(out ZCut cut, 0))
                 {
                     cutsStack.Add(cut);
                     items ++;

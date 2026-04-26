@@ -83,22 +83,35 @@ namespace HW5_GROUP_PROJECT.sand
         {
             ZOrderIndex zmin = ToUintRange(min);
             ZOrderIndex zmax = ToUintRange(max);
-            //clamp z min to range this min -> this max
-            zmin = zmin.PerElementMax(this.min);
-            zmin = zmin.PerElementMin(this.max);
-            //clamp z max to range zmin -> this max
+            //clamp z max to range zmin -> inf
             zmax = zmax.PerElementMax(zmin);
-            zmax = zmax.PerElementMin(this.max);
             this.Draw(handle, zmin, zmax);
         }
         public void Draw(DrawHandle handle, ZOrderIndex min, ZOrderIndex max)
         {
-            ZOrderIndex current = min;
-            while (current <= max.PerElementMin(this.max))
+            ZCut curr = new ZCut(min, max);
+            List<ZCut> cutsStack = new();
+            int items = 0;
+            while (true)
             {
-                SandPixel pixel = this.GetPixel(current);
-                handle.Invoke(FromUintRange(current.X), FromUintRange(current.Y), pixel);
-                current ++;
+                if(curr.Split(out ZCut cut, 10))
+                {
+                    cutsStack.Add(cut);
+                    items ++;
+                }
+                else
+                {
+                    for(ZOrderIndex i = curr.min; i <= curr.max; i++)
+                    {
+                        SandPixel pixel = this.GetPixel(i);
+                        handle.Invoke(FromUintRange(i.X), FromUintRange(i.Y), pixel);
+                    }
+                    if(items == 0)
+                        break;
+                    curr = cutsStack[items - 1];
+                    cutsStack.RemoveAt(items - 1);
+                    items --;
+                }
             }
         }
 

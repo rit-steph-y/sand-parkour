@@ -6,12 +6,26 @@ using Microsoft.Xna.Framework.Input;
 
 namespace HW5_GROUP_PROJECT
 {
+    internal enum PlayerState
+    {
+        LookRight,
+        LookLeft,
+        WalkRight,
+        WalkLeft,
+        JumpRight,
+        JumpLeft,
+        FallRight,
+        FallLeft
+    }
+
     internal class Player
     {
         private static Texture2D? cachedPlayerTexture;
         private int myX => (int)myPosition.X;
         private int myY => (int)myPosition.Y;
         public Vector2 Center => myPosition + new Vector2(myWidth, myHeight) * .5f;
+
+        private PlayerState playerState;
         private Vector2 myPosition;
         private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
 
@@ -26,18 +40,41 @@ namespace HW5_GROUP_PROJECT
         {
             if(cachedPlayerTexture == null)
             {
+                // https://lucky-loops.itch.io/character-satyr?download Credit technically not required
                 cachedPlayerTexture = game.Content.Load<Texture2D>("sandPlayerSprite");
             }
             this.myTexture = cachedPlayerTexture;
             this.myPosition = position;
+            PlayerState state = PlayerState.LookRight;
 
+            // I would manually set a width and height for the collision so it doesn't include the antlers
+            // You would have to calculate some sort of offset when drawing the sprite so it draws in the right place though
             this.myWidth = this.myTexture.Width;
             this.myHeight = this.myTexture.Height;
         }
 
         internal void Draw(SpriteBatch sprite, Camera camera)
         {
-            sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
+            switch (playerState)
+            {
+                case PlayerState.LookRight:
+                    sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
+                    break;
+                case PlayerState.LookLeft:
+                    break;
+                case PlayerState.WalkRight:
+                    break;
+                case PlayerState.WalkLeft:
+                    break;
+                case PlayerState.JumpRight:
+                    break;
+                case PlayerState.JumpLeft:
+                    break;
+                case PlayerState.FallRight:
+                    break;
+                case PlayerState.FallLeft:
+                    break;
+            }
         }
 
         internal void Update(KeyboardState state, GameTime time, SandGridComponent grid)
@@ -71,10 +108,10 @@ namespace HW5_GROUP_PROJECT
             }
             this.GetPlayerPosistionVector(grid);
 
-            this.ApplyFalling(grid);
+            this.ApplyFallingSand(grid);
         }
 
-        private void ApplyFalling(SandGridComponent grid)
+        private void ApplyFallingSand(SandGridComponent grid)
         {
             Point min = this.myPosition.ToPoint();
             Point max = min + new Point(this.myWidth, this.myHeight);

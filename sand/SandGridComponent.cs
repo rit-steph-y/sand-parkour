@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -106,13 +108,13 @@ namespace HW5_GROUP_PROJECT.sand
                 bottomRight.X + 1, 
                 bottomRight.Y + 1);
             Vector2 drawTopLeft = new(
-                topLeft.X, 
-                topLeft.Y);
+                topLeft.X - 1, 
+                topLeft.Y - 1);
     
             Point p = camera.Zoom.ToPoint();
             this.grid.Draw((x,y,pixel) =>
             {
-                if (pixel.id == PixelId.FALLING_SAND || pixel.id == PixelId.SAND)
+                if (pixel.id != PixelId.AIR)
                 {
                     Point tileTopLeft = camera.FromWorldSpace(new(x,y)).ToPoint();
                     batch.Draw(this.tex, new Rectangle(tileTopLeft, p), pixel.GetColor());
@@ -143,18 +145,18 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x coordinate to check</param>
         /// <param name="y">y coordinate to check</param>
         /// <returns>if the tile is solid</returns>
-        public bool IsSolid(uint minX, uint minY, uint maxX, uint maxY)
+        public bool IsSolid(Point min, Point max)
         {
-            if(minX > maxX || minY > maxY)
+            if(min.X > max.X || min.Y > max.Y)
             {
                 return false;
             }
-            ZCut curr = new ZCut(new(minX, minY), new(maxX, maxY));
+            ZCut curr = new ZCut(SandGrid.ToUintRange(min), SandGrid.ToUintRange(max));
             List<ZCut> cutsStack = new();
             int items = 0;
             while (true)
             {
-                if(curr.Split(out ZCut cut))
+                if(curr.Split(out ZCut cut, 0))
                 {
                     cutsStack.Add(cut);
                     items ++;
@@ -178,7 +180,7 @@ namespace HW5_GROUP_PROJECT.sand
         private bool IsSolid(ZOrderIndex index)
         {
             PixelId id = this.grid.GetPixel(index).id;
-            return id == PixelId.FALLING_SAND || id == PixelId.SAND;
+            return id != PixelId.AIR;
         }
 
         /// <summary>
@@ -187,11 +189,16 @@ namespace HW5_GROUP_PROJECT.sand
         /// <param name="x">x to set</param>
         /// <param name="y">y to set</param>
         /// <param name="id">id to set tile to.</param>
-        public void SetPixel(uint x, uint y, PixelId id, Color color)
+        public void SetPixel(Point point, PixelId id, Color color)
         {
-            ref SandPixel pixel = ref this.grid.GetPixel(new(x,y));
+            ref SandPixel pixel = ref this.grid.GetPixel(SandGrid.ToUintRange(point));
             pixel.id = id;
             pixel.SetColor(color);
+        }
+
+        internal ref SandPixel GetPixel(ZOrderIndex i)
+        {
+            return ref this.grid.GetPixel(i);
         }
     }
 }

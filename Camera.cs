@@ -1,6 +1,3 @@
-
-
-using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
@@ -31,6 +28,15 @@ namespace HW5_GROUP_PROJECT
         public readonly Vector2 ToWorldSpace(Vector2 vec)
         {
             return (vec - ClientBounds * .5f) / Zoom + Center;
+        }
+
+        public const float E = 2.718281828459045235360f;
+
+        public void TweenTo(Vector2 target, float speed, float delta)
+        {
+	        float scaleFac = 1f-float.Pow(E,-delta * speed);
+            Vector2 moveBy = (target - this.Center) * scaleFac;
+            this.Center += moveBy;
         }
     }
 }

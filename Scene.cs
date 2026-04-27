@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace HW5_GROUP_PROJECT
 {
@@ -20,8 +21,12 @@ namespace HW5_GROUP_PROJECT
         private Player player;
         private Flag flag;
         private Camera camera;
-
-        private float SandRollingAvgMs = 0;
+        //profiling vars, used to track average time per tick
+        private double RollingAvgUpdateTime = 0;
+        //profiling vars, used to track average time per tick
+        private double RollingAvgDrawCpuTime = 0;
+        //as well as configure how responsive the rolling average is.
+        private double UpdateTimeDecayRate = .1f;
         private Random rng;
 
         private SandGridComponent sand;
@@ -46,15 +51,30 @@ namespace HW5_GROUP_PROJECT
             this.rng = rng;
         }
 
-        internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch)
+        internal void Draw(Rectangle clientBounds,SpriteBatch spriteBatch, SpriteFont? debugFont)
         {
-            background.Draw(spriteBatch);
+            Stopwatch stopwatch = new Stopwatch();
 
-            this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
-            
-            this.sand.Draw(spriteBatch, camera);
-            flag.Draw(spriteBatch, camera);
-            this.player.Draw(spriteBatch, camera);
+            stopwatch.Start();
+
+            {
+                background.Draw(spriteBatch);
+
+                this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
+                
+                this.sand.Draw(spriteBatch, camera);
+                this.player.Draw(spriteBatch, camera);
+                if (debugFont != null)
+                {
+                    spriteBatch.DrawString(debugFont,$"avg update time: {this.RollingAvgUpdateTime:F2}ms",Vector2.Zero, Color.White);
+                    spriteBatch.DrawString(debugFont,$"avg draw cpu time: {this.RollingAvgDrawCpuTime:F2}ms",new(0,30), Color.White);
+                }
+            }
+
+            stopwatch.Stop();
+
+            this.RollingAvgDrawCpuTime *= 1 - this.UpdateTimeDecayRate;
+            this.RollingAvgDrawCpuTime += this.UpdateTimeDecayRate * stopwatch.Elapsed.TotalMilliseconds;
         }
 
         internal void LoadLevel(Game game)
@@ -69,47 +89,41 @@ namespace HW5_GROUP_PROJECT
             Console.WriteLine($"{colors[0]}");
 
             // Aj's code 
-            uint columns = 0;
-            uint rows = 0;
+            int columns = 0;
+            int rows = 0;
             foreach (Color i in colors)
             {
+                Point position = new(columns, rows);
                 if (i == Color.Red)
                 {
                     int colorMod = rng.Next(-10, 10);
-                    sand.SetPixel(columns, rows, PixelId.SAND, new Color(244 + colorMod, 164 + colorMod, 96 + colorMod));
-                    columns++;
+                    sand.SetPixel(position, PixelId.SAND, new Color(244 + colorMod, 164 + colorMod, 96 + colorMod));
                 }
                 else if (i == Color.White)
-                {
-                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
-                    columns++;
-                }
+                    sand.SetPixel(position, PixelId.AIR, Color.White);
                 else if (i == Color.Blue)
                 {
                     int colorMod = rng.Next(-10, 10);
-                    sand.SetPixel(columns, rows, PixelId.FALLING_SAND, new Color(245 + colorMod, 222 + colorMod, 179 + colorMod));
-                    columns++;
+                    sand.SetPixel(position, PixelId.FALLING_SAND, new Color(245 + colorMod, 222 + colorMod, 179 + colorMod));
                 }
                 // trying to add start & end to this
                 // R:0,G:255,B:0,A:255
                 else if (i == Color.Lime)
                 {
                     playerStartPos = new Vector2(columns, rows);
-                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
+                    sand.SetPixel(position, PixelId.AIR, Color.White);
                     columns++;
                 }
                 else if (i == Color.Yellow)
                 {
                     flagPos = new Vector2(columns, rows);
-                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
+                    sand.SetPixel(position, PixelId.AIR, Color.White);
                     columns++;
                 }
                 else
-                {
-                    sand.SetPixel(columns, rows, PixelId.INVALID, Color.Gray);
-                    columns++;
-                }
+                    sand.SetPixel(position, PixelId.INVALID, Color.Gray);
 
+                columns++;
                 if (columns >= spriteSheet.Width)
                 {
                     rows++;
@@ -123,22 +137,24 @@ namespace HW5_GROUP_PROJECT
 
         internal void Update(GameTime gameTime, SandGame game)
         {
-            MouseState mouseState = Mouse.GetState();
             KeyboardState keyState = Keyboard.GetState();
 
             Stopwatch stopwatch = new Stopwatch();
 
-            this.camera.Center = new(mouseState.Position.X, mouseState.Position.Y);
-
             stopwatch.Start();
+            
             this.sand.Update();
-            stopwatch.Stop();
 
             player.Update(keyState, gameTime, this.sand);
             flag.Update(player, game);
 
-            this.SandRollingAvgMs *= .7f;
-            this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
+            this.camera.TweenTo(this.player.Center,10,(float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            stopwatch.Stop();
+
+            this.RollingAvgUpdateTime *= 1 - this.UpdateTimeDecayRate;
+            this.RollingAvgUpdateTime += this.UpdateTimeDecayRate * stopwatch.Elapsed.TotalMilliseconds;
+
         }
     }
 }

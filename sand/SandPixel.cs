@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 
 namespace HW5_GROUP_PROJECT.sand
 {
+    [DefaultValue(PixelId.INVALID)]
     public enum PixelId: byte
     {
         INVALID = 0,

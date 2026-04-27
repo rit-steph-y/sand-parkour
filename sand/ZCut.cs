@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace HW5_GROUP_PROJECT.sand
 {
     public struct ZCut
@@ -24,10 +26,12 @@ namespace HW5_GROUP_PROJECT.sand
 
             return diff ^ (diff >> 1);
         }
-        public bool Split(out ZCut cut){
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Split(out ZCut cut, int tolerance){
             cut = new();
             ZOrderIndex highest_order_bit = this.HighestOrderDiff();
-            if (highest_order_bit == 0) {
+            if (highest_order_bit >> tolerance == 0) {
                 return false;
             }
 

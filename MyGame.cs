@@ -140,11 +140,11 @@ namespace HW5_GROUP_PROJECT
                     break;
 
                 case GameState.SandSimulation:
-                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
+                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch, this.font);
                     break;
 
                 case GameState.Pause:
-                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch);
+                    this.currentScene.Draw(this.Window.ClientBounds, this._spriteBatch, null);
                     currentMenu.Draw(this._spriteBatch);
                     break;
             }

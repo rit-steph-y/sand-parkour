@@ -11,7 +11,7 @@ namespace HW5_GROUP_PROJECT
 {
     internal enum GameState
     {
-        MainMenu,
+        Menu,
         SandSimulation,
         Pause
     }
@@ -92,13 +92,12 @@ namespace HW5_GROUP_PROJECT
         // There is no need to add anything to Game1's Update method!
         protected override void Update(GameTime gameTime)
         {
-
             mouseState = Mouse.GetState();
             keyState = Keyboard.GetState();
 
             switch (currentState)
             {
-                case GameState.MainMenu:
+                case GameState.Menu:
                     currentMenu.Update(mouseState, prevMouseState);
                     break;
 
@@ -135,7 +134,7 @@ namespace HW5_GROUP_PROJECT
             
             switch (currentState)
             {
-                case GameState.MainMenu:
+                case GameState.Menu:
                     currentMenu.Draw(_spriteBatch);
                     break;
 
@@ -200,7 +199,7 @@ namespace HW5_GROUP_PROJECT
             // Text
             currentMenu.AddText(titleFont, "SAND", Color.Black);
 
-            currentState = GameState.MainMenu;
+            currentState = GameState.Menu;
         }
 
         protected void PauseGame()
@@ -238,6 +237,8 @@ namespace HW5_GROUP_PROJECT
             // Text
             currentMenu.AddText(titleFont, "END", Color.Black);
             currentMenu.AddText(font, "You Won!", new Vector2(Menu.Rect.Width - 100, 75), Color.Black);
+
+            currentState = GameState.Menu;
         }
     }
 }

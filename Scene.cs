@@ -15,16 +15,20 @@ namespace HW5_GROUP_PROJECT
         private Texture2D spriteSheet;
         private Vector2 playerStartPos;
         private Player player;
+        private Flag flag;
         private Camera camera;
         private float SandRollingAvgMs = 0;
         private Random rng;
 
         private SandGridComponent sand;
 
-        internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Game game, Random rng)
+        internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Vector2 flagPos, Game game, Random rng)
         {
             this.playerStartPos = startPos;
             this.player = new(this.playerStartPos, game);
+
+            flag = new Flag(flagPos);
+
             this.camera = new();
             this.camera.Zoom = new(2);
 
@@ -50,6 +54,7 @@ namespace HW5_GROUP_PROJECT
             this.camera.ClientBounds = new(clientBounds.Width, clientBounds.Height);
             
             this.sand.Draw(spriteBatch, camera);
+            flag.Draw(spriteBatch, camera);
             this.player.Draw(spriteBatch, camera);
         }
 

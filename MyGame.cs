@@ -78,6 +78,7 @@ namespace HW5_GROUP_PROJECT
             // <a href="https://www.vecteezy.com/free-photos/desert">Desert Stock photos by Vecteezy</a>
             backgroundTex = Content.Load<Texture2D>("background");
             Scene.defaultBackground = new Background(backgroundTex, Color.White);
+            Flag.FlagTexture = Content.Load<Texture2D>("flagTex");
 
             blankTexture = Content.Load<Texture2D>("blank_tex");
             titleFont = Content.Load<SpriteFont>("TitleFont");
@@ -174,7 +175,7 @@ namespace HW5_GROUP_PROJECT
 
         private void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), this, rng);
+            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), new Vector2(240, 240), this, rng);
             currentScene.LoadLevel();
             currentState = GameState.SandSimulation;
         }

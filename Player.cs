@@ -1,4 +1,5 @@
-﻿using HW5_GROUP_PROJECT.sand;
+﻿using System.Collections.Generic;
+using HW5_GROUP_PROJECT.sand;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -70,7 +71,41 @@ namespace HW5_GROUP_PROJECT
             }
             this.GetPlayerPosistionVector(grid);
 
+            this.ApplyFalling(grid);
+        }
 
+        private void ApplyFalling(SandGridComponent grid)
+        {
+            Point min = this.myPosition.ToPoint();
+            Point max = min + new Point(this.myWidth, this.myHeight);
+            max += new Point(1,1);
+            min -= new Point(1,1);
+
+            ZCut curr = new ZCut(SandGrid.ToUintRange(min), SandGrid.ToUintRange(max));
+            List<ZCut> cutsStack = new();
+            int items = 0;
+            while (true)
+            {
+                if(curr.Split(out ZCut cut, 0))
+                {
+                    cutsStack.Add(cut);
+                    items ++;
+                }
+                else
+                {
+                    for(ulong i = curr.min; i <= curr.max; i++)
+                    {
+                        ref SandPixel pixel = ref grid.GetPixel(i);
+                        if(pixel.id == PixelId.SAND)
+                            pixel.id = PixelId.FALLING_SAND;
+                    }
+                    if(items == 0)
+                        break;
+                    curr = cutsStack[items - 1];
+                    cutsStack.RemoveAt(items - 1);
+                    items --;
+                }
+            }
         }
 
         private void GetPlayerPosistionVector(SandGridComponent grid) 

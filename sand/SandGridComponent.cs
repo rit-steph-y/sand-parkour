@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -193,6 +194,11 @@ namespace HW5_GROUP_PROJECT.sand
             ref SandPixel pixel = ref this.grid.GetPixel(SandGrid.ToUintRange(point));
             pixel.id = id;
             pixel.SetColor(color);
+        }
+
+        internal ref SandPixel GetPixel(ZOrderIndex i)
+        {
+            return ref this.grid.GetPixel(i);
         }
     }
 }

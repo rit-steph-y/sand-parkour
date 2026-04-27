@@ -105,7 +105,7 @@ namespace HW5_GROUP_PROJECT
             } 
         }
 
-        internal void Update(GameTime gameTime)
+        internal void Update(GameTime gameTime, SandGame game)
         {
             MouseState mouseState = Mouse.GetState();
             KeyboardState keyState = Keyboard.GetState();
@@ -119,6 +119,7 @@ namespace HW5_GROUP_PROJECT
             stopwatch.Stop();
 
             player.Update(keyState, gameTime, this.sand);
+            flag.Update(player, game);
 
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;

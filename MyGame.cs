@@ -108,7 +108,7 @@ namespace HW5_GROUP_PROJECT
                         PauseGame();
                     }
 
-                    this.currentScene.Update(gameTime);
+                    this.currentScene.Update(gameTime, this);
                     break;
 
                 case GameState.Pause:
@@ -153,7 +153,7 @@ namespace HW5_GROUP_PROJECT
             base.Draw(gameTime);
         }
 
-        private void NextLevel()
+        internal void NextLevel()
         {
             if (levelIndex + 1 < levels.Length)
             {

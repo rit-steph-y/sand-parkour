@@ -24,6 +24,7 @@ namespace HW5_GROUP_PROJECT
         private int myX => (int)myPosition.X;
         private int myY => (int)myPosition.Y;
         public Vector2 Center => myPosition + new Vector2(myWidth, myHeight) * .5f;
+        internal Rectangle Rect => new Rectangle(myPosition.ToPoint(), new Point(myWidth, myHeight));
 
         private PlayerState playerState;
         private Vector2 myPosition;

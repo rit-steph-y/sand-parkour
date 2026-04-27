@@ -46,8 +46,7 @@ namespace HW5_GROUP_PROJECT
 
         internal void Update(Player player, SandGame game)
         {
-            if (rect.Contains(player.GetTopLeftCorner()) || rect.Contains(player.GetBottomLeftCorner()) ||
-                rect.Contains(player.GetTopRightCorner()) || rect.Contains(player.GetBottomRightCorner()))
+            if (rect.Intersects(player.Rect))
             {
                 game.NextLevel();
             }

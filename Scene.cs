@@ -73,6 +73,8 @@ namespace HW5_GROUP_PROJECT
 
             stopwatch.Stop();
 
+            flag.Draw(spriteBatch, camera);
+
             this.RollingAvgDrawCpuTime *= 1 - this.UpdateTimeDecayRate;
             this.RollingAvgDrawCpuTime += this.UpdateTimeDecayRate * stopwatch.Elapsed.TotalMilliseconds;
         }
@@ -112,18 +114,16 @@ namespace HW5_GROUP_PROJECT
                 {
                     playerStartPos = new Vector2(columns, rows);
                     sand.SetPixel(position, PixelId.AIR, Color.White);
-                    columns++;
                 }
                 else if (i == Color.Yellow)
                 {
                     flagPos = new Vector2(columns, rows);
                     sand.SetPixel(position, PixelId.AIR, Color.White);
-                    columns++;
                 }
                 else
                     sand.SetPixel(position, PixelId.INVALID, Color.Gray);
 
-                columns++;
+                    columns++;
                 if (columns >= spriteSheet.Width)
                 {
                     rows++;

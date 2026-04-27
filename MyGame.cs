@@ -175,8 +175,8 @@ namespace HW5_GROUP_PROJECT
 
         private void StartLevel()
         {
-            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], new Vector2(120,120), new Vector2(240, 240), this, rng);
-            currentScene.LoadLevel();
+            currentScene = new Scene(levels[levelIndex], backgrounds[levelIndex], this, rng);
+            currentScene.LoadLevel(this);
             currentState = GameState.SandSimulation;
         }
 
@@ -227,7 +227,7 @@ namespace HW5_GROUP_PROJECT
 
         private void EndScreen()
         {
-            currentMenu = new Menu(backgrounds.Last(), Color.White);
+            currentMenu = new Menu(backgroundTex, Color.White);
 
             // Buttons
             currentMenu.AddButton(blankTexture, font, "Quit", 165, 60, Color.Wheat, Color.Sienna);

@@ -13,22 +13,21 @@ namespace HW5_GROUP_PROJECT
         internal static Background defaultBackground { get; set; }
         private Background background;
         private Texture2D spriteSheet;
+
         private Vector2 playerStartPos;
+        private Vector2 flagPos;
+
         private Player player;
         private Flag flag;
         private Camera camera;
+
         private float SandRollingAvgMs = 0;
         private Random rng;
 
         private SandGridComponent sand;
 
-        internal Scene(Texture2D spriteSheet, Texture2D background, Vector2 startPos, Vector2 flagPos, Game game, Random rng)
+        internal Scene(Texture2D spriteSheet, Texture2D background, Game game, Random rng)
         {
-            this.playerStartPos = startPos;
-            this.player = new(this.playerStartPos, game);
-
-            flag = new Flag(flagPos);
-
             this.camera = new();
             this.camera.Zoom = new(2);
 
@@ -58,7 +57,7 @@ namespace HW5_GROUP_PROJECT
             this.player.Draw(spriteBatch, camera);
         }
 
-        internal void LoadLevel()
+        internal void LoadLevel(Game game)
         {
             //initializes an array of colors the exact size of said texture
             Color[] colors = new Color[spriteSheet.Height * spriteSheet.Width];
@@ -91,6 +90,20 @@ namespace HW5_GROUP_PROJECT
                     sand.SetPixel(columns, rows, PixelId.FALLING_SAND, new Color(245 + colorMod, 222 + colorMod, 179 + colorMod));
                     columns++;
                 }
+                // trying to add start & end to this
+                // R:0,G:255,B:0,A:255
+                else if (i == Color.Lime)
+                {
+                    playerStartPos = new Vector2(columns, rows);
+                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
+                    columns++;
+                }
+                else if (i == Color.Yellow)
+                {
+                    flagPos = new Vector2(columns, rows);
+                    sand.SetPixel(columns, rows, PixelId.AIR, Color.White);
+                    columns++;
+                }
                 else
                 {
                     sand.SetPixel(columns, rows, PixelId.INVALID, Color.Gray);
@@ -102,7 +115,10 @@ namespace HW5_GROUP_PROJECT
                     rows++;
                     columns = 0;
                 }
-            } 
+            }
+            this.player = new(this.playerStartPos, game);
+
+            flag = new Flag(flagPos);
         }
 
         internal void Update(GameTime gameTime, SandGame game)
@@ -123,7 +139,6 @@ namespace HW5_GROUP_PROJECT
 
             this.SandRollingAvgMs *= .7f;
             this.SandRollingAvgMs += .3f * stopwatch.ElapsedMilliseconds;
-
         }
     }
 }

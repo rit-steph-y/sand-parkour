@@ -90,7 +90,7 @@ namespace HW5_GROUP_PROJECT
                     sand.SetPixel(columns, rows, PixelId.FALLING_SAND, new Color(245 + colorMod, 222 + colorMod, 179 + colorMod));
                     columns++;
                 }
-                // trying to add start & end to this
+                // added start & end
                 // R:0,G:255,B:0,A:255
                 else if (i == Color.Lime)
                 {

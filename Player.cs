@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HW5_GROUP_PROJECT.sand;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,23 +21,41 @@ namespace HW5_GROUP_PROJECT
 
     internal class Player
     {
+        private float JumpVelocity = 230;
         private static Texture2D? cachedPlayerTexture;
-        private int myX => (int)myPosition.X;
-        private int myY => (int)myPosition.Y;
-        public Vector2 Center => myPosition + new Vector2(myWidth, myHeight) * .5f;
-        internal Rectangle Rect => new Rectangle(myPosition.ToPoint(), new Point(myWidth, myHeight));
+        public Vector2 Center => Position + new Vector2(myWidth, myHeight) * .5f;
+        internal Rectangle Rect => new Rectangle(this.PixelPosition, new Point(myWidth, myHeight));
+
+        private Point PixelPosition
+        {
+            get
+            {
+                Point p = this.Position.ToPoint();
+                if(float.IsNegative(this.Position.X))
+                    p.X -= 1;
+                if(float.IsNegative(this.Position.Y))
+                    p.Y -= 1;
+                return p;
+            }
+        }
 
         private PlayerState playerState;
-        private Vector2 myPosition;
-        private Vector2 myBottomRight => myPosition + new Vector2(myWidth, myHeight);
+        private Vector2 Position;
+        private Vector2 myBottomRight => Position + new Vector2(myWidth, myHeight);
 
+        private float jumpBufferTime = .15f;
+        private float groundedBuffer = 0;
+        private float jumpBuffer = 0;
+        private bool Grounded = false; 
         private int myHeight;
         private int myWidth;
 
+        private float WalkAccel = 1000f;
+        private float friction = .2f;
+
         private Texture2D myTexture;
-        private Vector2 myVelocity;
-        private Vector2 myGravity = new Vector2(0,0.05f);
-        private Vector2 myFriction = new Vector2(1,0);
+        private Vector2 velocity;
+        private Vector2 gravity = new Vector2(0,400f);
         internal Player(Vector2 position, Game game)
         {
             if(cachedPlayerTexture == null)
@@ -45,7 +64,7 @@ namespace HW5_GROUP_PROJECT
                 cachedPlayerTexture = game.Content.Load<Texture2D>("sandPlayerSprite");
             }
             this.myTexture = cachedPlayerTexture;
-            this.myPosition = position;
+            this.Position = position;
             PlayerState state = PlayerState.LookRight;
 
             // I would manually set a width and height for the collision so it doesn't include the antlers
@@ -59,7 +78,7 @@ namespace HW5_GROUP_PROJECT
             switch (playerState)
             {
                 case PlayerState.LookRight:
-                    sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.myPosition, this.myBottomRight), Color.White);
+                    sprite.Draw(myTexture, camera.FromWorldSpaceRect(this.Position, this.myBottomRight), Color.White);
                     break;
                 case PlayerState.LookLeft:
                     break;
@@ -80,41 +99,156 @@ namespace HW5_GROUP_PROJECT
 
         internal void Update(KeyboardState state, GameTime time, SandGridComponent grid)
         {
-            
-            myVelocity += myGravity - myFriction * myVelocity;
-            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.Space)) {
-                if (this.IsColliding(grid) == true)
-                {
-                    myVelocity.Y = -4;
-                }
-               
-            }
+            float delta = (float)time.ElapsedGameTime.TotalSeconds;
+            Vector2 acceleration = Vector2.Zero;
+            acceleration += this.gravity;
+            acceleration += -this.friction * this.velocity;
+            acceleration += GetMoveForce(state);
 
-            if (state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
-            {
-                myVelocity.X = -3;
-            }
+            // if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
+            // {
+            //     if (this.IsColliding(grid) == false)
+            //     {
+            //         velocity.Y = +3;
+            //     }
+            // }
+            acceleration = HandleJump(state, delta, acceleration);
 
-            if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
-            {
-                if (this.IsColliding(grid) == false)
-                {
-                    myVelocity.Y = +3;
-                }
-            }
+            this.velocity += acceleration * delta;
 
-            if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
-            {
-                myVelocity.X =  + 3;
-            }
-            this.GetPlayerPosistionVector(grid);
+            this.MoveAndSlide(grid, delta);
 
             this.ApplyFallingSand(grid);
         }
 
+        private Vector2 HandleJump(KeyboardState state, float delta, Vector2 acceleration)
+        {
+            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.Space))
+            {
+                this.jumpBuffer = this.jumpBufferTime;
+            }
+
+            if (this.groundedBuffer > 0 && this.jumpBuffer > 0)
+            {
+                this.groundedBuffer = 0;
+                this.jumpBuffer = 0;
+                acceleration.Y -= JumpVelocity / delta;
+                acceleration.Y -= this.velocity.Y / delta;
+            }
+
+            this.groundedBuffer -= delta;
+            this.jumpBuffer -= delta;
+            return acceleration;
+        }
+
+        private Vector2 GetMoveForce(KeyboardState state)
+        {
+            Vector2 force = Vector2.Zero;
+            if (state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
+            {
+                force -= Vector2.UnitX;
+            }
+            if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
+            {
+                force += Vector2.UnitX;
+            }
+
+            //reverse direction boost
+            if (Vector2.Dot(force, this.velocity) < float.Epsilon)
+            {
+                force *= 2;
+            }
+            Vector2 xFriction = new Vector2(this.velocity.X, 0) * -4;
+            return force * this.WalkAccel + xFriction;
+        }
+
+        private void MoveAndSlide(SandGridComponent grid, float delta)
+        {
+            const float StepSize = 1;
+            Vector2 originalPos = this.Position;
+            Vector2 movedBy = this.velocity * delta;
+
+            if (this.Grounded)
+            {
+                movedBy.Y += 2;
+            }
+
+            this.Position.X += movedBy.X;
+            if (this.IsColliding(grid))
+            {
+                this.Position.X = originalPos.X;
+                float distanceLeft = movedBy.X;
+                float sign = float.Sign(distanceLeft);
+                distanceLeft *= sign; // force this to be positive
+                while(distanceLeft > 0)
+                {
+                    float step = sign * Math.Min(distanceLeft, StepSize);
+                    this.Position.X += step;
+                    distanceLeft -= StepSize;
+                    if (this.IsColliding(grid))
+                    {
+                        float slopeUpStep = 1f;
+                        this.Position.Y -= slopeUpStep;
+                        if(this.IsColliding(grid)){
+                            this.Position.X -= step;
+                            this.Position.Y += slopeUpStep;
+                            break;
+                        }
+                        else
+                        {
+                            this.velocity.Y = (this.Position.Y - originalPos.Y) / delta;
+                        }
+                    }
+                }
+                this.velocity.X = (this.Position.X - originalPos.X) / delta;
+            }
+
+            bool newGrounded = false;
+            this.Position.Y += movedBy.Y;
+            if (this.IsColliding(grid))
+            {
+                this.Position.Y = originalPos.Y;
+                float distanceLeft = movedBy.Y;
+                float sign = float.Sign(distanceLeft);
+
+                distanceLeft *= sign; // force this to be positive
+
+                if(sign > 0)
+                {
+                    newGrounded = true;
+                    this.groundedBuffer = this.jumpBufferTime;
+                    if (this.Grounded)
+                    {
+                        distanceLeft += 1;
+                        this.Position.Y -= sign;
+                    }
+                }
+                
+                while(distanceLeft > 0)
+                {
+                    float step = sign * Math.Min(distanceLeft, StepSize);
+                    this.Position.Y += step;
+                    distanceLeft -= StepSize;
+                    if (this.IsColliding(grid))
+                    {
+                        this.Position.Y -= step;
+                        break;
+                    }
+                }
+                this.velocity.Y = (this.Position.Y - originalPos.Y) / delta;
+            }
+            this.Grounded = newGrounded;
+        }
+
+        private bool IsColliding (SandGridComponent grid)
+        {
+            
+            return grid.IsSolid(this.PixelPosition, this.PixelPosition + new Point(this.myWidth, this.myHeight));
+        }
+
         private void ApplyFallingSand(SandGridComponent grid)
         {
-            Point min = this.myPosition.ToPoint();
+            Point min = this.PixelPosition;
             Point max = min + new Point(this.myWidth, this.myHeight);
             max += new Point(1,1);
             min -= new Point(1,1);
@@ -144,54 +278,6 @@ namespace HW5_GROUP_PROJECT
                     items --;
                 }
             }
-        }
-
-        private void GetPlayerPosistionVector(SandGridComponent grid) 
-        {
-            myPosition += this.myVelocity;
-            if (IsColliding(grid))
-            {
-                myVelocity.Y = 0;
-                myPosition.Y = this.myY;
-            }
-            
-            // // check for going out of bounds, will cause a crash.
-            // if (this.myX <=1) { myPosition.X = 1; myVelocity.X = 1; }
-            // if (this.myX + this.myWidth >= 1000) { myPosition.X = 999 - this.myWidth; myVelocity.X = 0; }
-            // if (this.myY <= 1) { myPosition.Y = 1; myVelocity.Y = 1; }
-        }
-
-        private bool IsColliding (SandGridComponent grid)
-        {
-            return grid.IsSolid(this.myPosition.ToPoint(), this.myPosition.ToPoint() + new Point(this.myWidth, this.myHeight));
-        }
-
-        // Player with movement, collisions not implemented yet.
-        // the following methods are for convience
-        // and because getting the corners of a sprite always annoys me.
-        // and we might need them. - AJ
-
-        internal Vector2 GetTopLeftCorner()
-        {
-            Vector2 temp = new Vector2(this.myX, this.myY);
-            return temp;
-        }
-        internal Vector2 GetTopRightCorner()
-        {
-            Vector2 temp = new Vector2(this.myX + this.myWidth, this.myY);
-            return temp;
-        }
-
-        internal Vector2 GetBottomLeftCorner()
-        {
-            Vector2 temp = new Vector2(this.myX, this.myY + this.myHeight);
-            return temp;
-        }
-
-        internal Vector2 GetBottomRightCorner()
-        {
-            Vector2 temp = new Vector2(this.myX + this.myWidth, this.myY + this.myHeight);
-            return temp;
         }
     }
 }
